@@ -1,20 +1,27 @@
 import Head from 'next/head'
 import Header from '@components/Header'
 import Footer from '@components/Footer'
+import Navbar from '@components/Navbar'
+import Map from '@components/Map'
+
+
 
 export default function Home() {
   return (
     <div className="container">
       <Head>
-        <title>Next.js Starter!</title>
+        <title>bad landlords</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-        <Header title="Welcome to my app!" />
+        <Navbar />
+        <Header title="Bad Landlords" />
         <p className="description">
-          Get started by editing <code>pages/index.js</code>
+          Bad landlords in Boston Map
         </p>
+        <Map />
+        
       </main>
 
       <Footer />

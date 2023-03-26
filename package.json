@@ -8,9 +8,19 @@
     "export": "next export"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mapbox/mapbox-gl-geocoder": "^5.0.1",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.14",
     "cypress": "^10.0.3",
+    "dotenv": "^16.0.3",
+    "mapbox-gl": "^2.13.0",
     "next": "^12.1.5",
+    "ogr2ogr": "^4.0.1",
+    "prop-types": "^15.8.1",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "react-map-gl": "^7.0.21"
   }
 }

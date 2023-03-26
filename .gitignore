@@ -31,3 +31,9 @@ yarn-error.log*
 
 # Local Netlify folder
 .netlify
+
+#tokens
+.env
+
+#mts-data-sync
+/mts-data-sync
