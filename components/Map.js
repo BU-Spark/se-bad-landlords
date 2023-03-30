@@ -15,9 +15,9 @@ const Map = () => {
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/streets-v11",
         center: [-71.0589, 42.3601],
-        zoom: 10
+        zoom: 11
       });
-
+      let tract_id = null;
       //===============================================
       //load the default map mapbox/streets-v11
       //===============================================
@@ -47,15 +47,49 @@ const Map = () => {
           'source-layer': 'census2020_tracts-baue3k',
           'paint': {
             'fill-color': 'blue',
-            'fill-opacity': 0.5,
+            'fill-outline-color': 'red',
+            'fill-opacity': 0.3,
           }
           });
          
+          map.on('mousemove', 'census-block-layer', (f) =>{
+              tract_id = f.features[0].properties["FID"];
+              map.getCanvas().style.cursor = 'pointer';
+              map.setFeatureState(
+                {
+                  source: 'census',
+                  id: tract_id
+                },
+                {
+                  hover: true
+                }
+              );
+              map.setPaintProperty('census-block-layer', 'census', 'blue');
+          });
+          // When the mouse leaves the earthquakes-viz layer, update the
+          // feature state of the previously hovered feature
+          map.on('mouseleave', 'census-block-layer', () => {
+              if (tract_id) {
+                map.setFeatureState(
+              {
+                source: 'census',
+                id: tract_id
+              },
+              {
+                hover: false
+              }
+              );
+              }
+              tract_id = null;
+              // Reset the cursor style
+              map.getCanvas().style.cursor = '';
+          });
+          
           map.addSource('violations', {
             type: 'geojson',
             // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
             // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-            data: 'https://studio.mapbox.com/tilesets/koladeadegbaye.3g1bect5/#12.83/42.31733/-71.09739',
+            data: 'https://kolade2.github.io/Bad-Landlords/data/build-viol.geojson',
             cluster: true,
             clusterMaxZoom: 14, // Max zoom to cluster points on
             clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
@@ -70,20 +104,20 @@ const Map = () => {
             'circle-color': [
                 'step',
                 ['get', 'point_count'],
-                '#51bbd6',
-                100,
-                '#f1f075',
-                750,
-                '#f28cb1'
+                '#31C1F7',
+                90,
+                '#A7E7FF',
+                650,
+                '#C0A9FD'
             ],
             'circle-radius': [
                 'step',
                 ['get', 'point_count'],
+                10,
+                90,
                 20,
-                100,
-                30,
-                750,
-                40
+                650,
+                30
             ]
           }
           });
@@ -95,7 +129,7 @@ const Map = () => {
             layout: {
                 'text-field': ['get', 'point_count_abbreviated'],
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                'text-size': 12
+                'text-size': 11
               }
             });
             
@@ -111,7 +145,58 @@ const Map = () => {
                 'circle-stroke-color': '#fff'
             }
             });
-      });
+            
+            // inspect a cluster on click
+            map.on('click', 'clusters', (e) => {
+                const features = map.queryRenderedFeatures(e.point, {
+                layers: ['clusters']
+            });
+            
+            const clusterId = features[0].properties.cluster_id;
+            map.getSource('violations').getClusterExpansionZoom(
+            clusterId,
+            (err, zoom) => {
+            if (err) return;
+                map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom
+                });
+                }
+            );
+            });
+            
+            // When a click event occurs on a feature in
+            // the unclustered-point layer, open a popup at
+            // the location of the feature, with
+            // description HTML from its properties.
+            map.on('click', 'unclustered-point', (e) => {
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const code = e.features[1].properties["code"];
+                const addr = e.features[1].properties["contact_addr1"];
+                const description = e.features[1].properties["description"];
+                const date_time = e.features[1].properties["status_dttm"]
+                // Ensure that if the map is zoomed out such that
+                // multiple copies of the feature are visible, the
+                // popup appears over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+                
+            new mapboxgl.Popup()
+              .setLngLat(coordinates)
+              .setHTML(
+              `Address: ${addr}<br> Violation code: ${code}<br> Description: ${description}<br> Date/Time: ${date_time}`
+            )
+              .addTo(map);
+            });
+            
+            map.on('mouseenter', 'clusters', () => {
+            map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', 'clusters', () => {
+            map.getCanvas().style.cursor = '';
+            });
+      }); 
     };
 
     if (!map) initializeMap({ setMap, mapContainer });
