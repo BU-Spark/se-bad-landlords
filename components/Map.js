@@ -2,7 +2,7 @@
 import mapboxgl from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import React, { useEffect, useRef, useState } from "react";
-import Table from "./Table"; 
+import Table from "../pages/Table"; 
 
 const Map = () => {
   const [map, setMap] = useState(null);
