@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Owners and Violations</title>
+    <link href="globals.css" rel="stylesheet">
+    <script src="../data/landlords.py"></script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div className="landlords-list">
+        <h1>Owners and Violations</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Owner</th>
+                    <th>Loc_id</th>
+                    <th>Violation</th>
+                    <th>Code</th>
+                    <th>Code_no</th>
+                </tr>
+            </thead>
+            <tbody id="ownersTableBody">
+                <!-- Data will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Get the serialized 'grouped_df_json' from the server-rendered HTML page
+        var ownersData = JSON.parse(document.getElementById('df_grouped_json').textContent);
+
+        // ... your React component code ...
+    </script>
+</body>
