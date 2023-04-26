@@ -155,7 +155,7 @@ const Map = () => {
 
           map.addLayer({
           id: 'unclustered-point',
-          type: 'circle',
+          type: 'circle', 
           source: 'violations',
           filter: ['!', ['has', 'point_count']],
           paint: {
