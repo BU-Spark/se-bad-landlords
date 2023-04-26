@@ -1,5 +1,6 @@
 html,
 body {
+  background-color: #ffffff;
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
@@ -10,31 +11,395 @@ body {
   box-sizing: border-box;
 }
 
-main {
-  padding: 5rem 0;
-  flex: 1;
+.container {
+  position: relative;
+  height: 100%;
+  width: 99.6%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
+.map-container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.header-container {
+  top: -75px;
+  position: relative;
+  width: 100%;
+  background-color: #000080;
+  padding: auto;
+  margin: none;
+  display: flex;
+  float: right;
+  flex-direction: column;
+  height: fit-content;
+  width: 99.3vw;
+  color: #ffffff;
+  text-align: center;
+}
+
+.header-title {
+  position: relative;
+  /* background-color: rgb(5, 12, 53); */
+  color: #ffffff;
+  font-size: 22px;
+  /* Update text color to white */
+  text-align: left;
+  justify-content: center;
+  /* Remove default margin */
+  /* padding: 10px; */
+  padding-top: 25px;
+  padding-bottom: 10px;
+  margin: auto;
+  /* Add some padding */
+}
+
+.header-body {
+  background-color: #000080;
+  color: #ffa600;
+  /* Update text color to white */
+  text-align: left;
+  justify-content: center;
+  margin: 0;
+}
+
+.header-body-h {
+  float: left;
+  font-size: 35px;
+  line-height: 0.8;
+  padding-top: 2%;
+  margin: auto;
+  width: 58%;
+  padding-bottom: 2%;
+  padding-left: 15%;
+}
+
+.header-body-p {
+  color: white;
+  width: 42%;
+  float: right;
+  padding-top: 4%;
+  padding-right: 15%;
+  font-size: 16px;
+  font-weight: lighter;
+
+}
+
+.header-two {
+  height: 20vh;
+  background-color: #010038;
+}
+
+.header-two h2 {
+  padding: auto;
+  margin: auto;
+  width: 85%;
+}
+
+.header-two p {
+  line-height: 1.9;
+  padding: auto;
+  margin: auto;
+  width: 85%;
+  text-align: left;
+  padding-bottom: 5px;
+}
+
+/* Example custom styles for Mapbox Geocoder */
+.mapboxgl-ctrl-geocoder {
+  display: flex;
+  width: 100%;
+  /* Change font size */
+  font-size: 14px;
+
+  /* Change input box background color */
+  background-color: #ffffff;
+
+  /* Change input box text color */
+  color: #000000;
+
+  /* Add custom padding */
+  padding: 10px;
+
+  /* Add custom border */
+  border: 1px solid #ccc;
+
+  /* Add custom border radius */
+  border-radius: 5px;
+}
+
+
+.mapboxgl-ctrl-geocoder input {
+  /* Add custom border radius */
+  border-radius: 5px;
+
+  /* Add custom padding for the input field */
+  padding: 5px;
+
+  /* Change the color of the input text */
+  color: #555;
+
+  /* Change the background color of the input field */
+  background-color: #dfdfdf;
+}
+
+.geocoder {
+  position: absolute;
+  z-index: 1;
+  width: 50%;
+  left: 50%;
+  margin-left: -25%;
+  top: 10px;
+}
+
+.section-title {
+  width: 85%;
+  justify-content: center;
+  color: #0a2463;
+  text-align: center;
+}
+
+hr {
+  width: 85%;
+  margin: auto;
+  border: 0;
+  border-radius: 2px;
+  border-bottom: 4px solid#ffa600;
+  padding: 0;
+
+}
+
+.section-header {
+  padding: 10px;
+  font-size: 20px;
+  width: 100%;
+  margin: auto;
+  justify-content: center;
+  color: #0a2463;
+  /* Add some margin to separate from header */
+  text-align: left;
+}
+
+.navbar-container {
+  margin-bottom: 5%;
+}
+
+.MuiToolbar-root,
+.MuiToolbar-gutters,
+.MuiToolbar-regular,
+.css-hyum1k-MuiToolbar-root {
+  background-color: #000080;
+}
+
+.css-1kkpk3h-MuiButtonBase-root-MuiButton-root {
+  font-weight: bold;
+  color: #ffa600;
+}
+
+.css-78c6dr-MuiToolbar-root-MuiTablePagination-toolbar {
+  background-color: #eaeaea;
+}
+
+.section-title-header {
+  width: 100%;
+  margin-bottom: 0;
+  margin: auto;
+  color: #0a2463;
+  /* Add some margin to separate from header */
+  text-align: center;
+}
+
+.mapboxgl-canvas {
+  margin-top: 0px;
+}
+
+.MuiToolbar-root {
+  top: 0;
+  width: 100%;
+  height: fit-content;
+}
+
 code {
-  background: #fafafa;
+  /* background: #e1e1e1; */
   border-radius: 5px;
   padding: 0.75rem;
   font-family: Menlo, Monaco, Lucida Console, Courier New, monospace;
 }
 
-.container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+body {
+  margin: 0;
+  padding: 0;
 }
 
-.mapboxgl-canvas {
-  width: 80vw;
-  height: 80vh;
+.header-links-container {
+  float: left;
+  padding-left: 7.3%;
+  display: flex;
+  justify-content: center;
+  align-items: left;
+}
+
+.link {
+  text-decoration: none;
+  font-weight: bold;
+  color: #ffa600;
+  font-size: 16px;
+  margin: 0 3px;
+  padding-bottom: 10px;
+  /* Adjust the spacing between links as desired */
+}
+
+.link:hover {
+  transition: all;
+  color: #ff9d00;
+  text-decoration: underline;
+  /* Change the color on hover as desired */
+}
+
+.map-container {
+  width: 75%;
+  padding: 10px;
+  height: auto;
+  float: left;
+}
+
+#popupContainer {
+  width: 25%;
+  display: flex;
+  height: fit-content;
+  flex-direction: column;
+  line-height: 1.9;
+  float: right;
+  font-size: 18px;
+  /* Define the position of your popup container */
+  /* position: absolute; */
+  top: 15px;
+  /* Example: adjust to desired vertical position */
+  right: 0px;
+  /* Example: adjust to desired horizontal position */
+
+  /* Add any other desired styling */
+  background-color: rgb(255, 255, 255);
+  padding: 5px;
+  display: none;
+  margin: none !important;
+  /* Hide the popup container by default */
+}
+
+strong {
+  color: rgb(61, 61, 61);
+}
+
+.landing-body {
+  position: relative;
+  justify-content: center;
+  margin: auto;
+  padding: auto;
+  width: 86%;
+}
+
+.hr-body {
+  color: #000080 !important;
+}
+
+.Table {
+  width: 85vw;
+}
+
+/* Style for the table */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Style for table header cells */
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  padding: 12px;
+  text-align: left;
+}
+
+/* Style for table data cells */
+td {
+  border: 1px solid #ddd;
+  padding: 12px;
+}
+
+/* Style for table rows */
+tr {
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for table rows */
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+.navbar {
+  justify-content: center;
+  height: 90px;
+  background-color: #00012e;
+  padding: 20px;
+}
+
+.navbar-list {
+  justify-content: center;
+  float: right;
+  list-style-type: none;
+  margin: 20;
+  padding: auto;
+  display: flex;
+}
+
+.navbar-item {
+  margin-right: 30px;
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: #ff7700;
+}
+
+.navbar-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design for the table */
+@media screen and (max-width: 768px) {
+  table {
+    font-size: 14px;
+  }
+
+  th,
+  td {
+    padding: 8px;
+  }
+}
+
+.violation-item {
+  margin-right: 5px;
+  /* Add margin between multiple violations */
+  background-color: #ffffff;
+  /* Set background color for violations */
+  padding: 10px 5px;
+  /* Add padding for spacing */
+  border-radius: 3px;
+  /* Add border radius for rounded corners */
+}
+
+.landlords-page {
+  height: 60vh;
+  width: auto;
+  padding: auto;
+  margin: auto;
+}
+
+
+.landlords-table {
+  height: 60vh;
 }
