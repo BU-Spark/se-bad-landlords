@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import Navbar from '@components/Navbar';
 const Landlords = () => {
   const [owners, setOwners] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,9 +36,11 @@ const Landlords = () => {
   const currentItems = owners.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div>
+    <>
+    <Navbar />
+    <div className="landlords-page">
       <h1>Owners and Violations</h1>
-      <table>
+      <table className='landlords-table' style={{height: '60%'}}>
         <thead>
           <tr>
             <th>Owner</th>
@@ -51,22 +53,18 @@ const Landlords = () => {
           {currentItems.map((owner) => (
             <tr key={owner.owner1_name}>
               <td>{owner.owner1_name}</td>
-              <td>
-                {owner.case_no.split(',').map((case_no, index) => (
+              <td>{owner.case_no.split(',').map((case_no, index) => (
                   <div key={index} className="case_no-item">
                     {case_no}
                   </div>
-                ))}
-              </td>
-              <td>
-                {owner.code.split(',').map((code, index) => (
+                ))}</td>
+              <td>{owner.code.split(',').map((code, index) => (
                   <div key={index} className="code-item">
                     {code}
                   </div>
-                ))}
-              </td>
+                ))}</td>
               <td>
-                {owner.violation.split(',').map((violation, index) => (
+                {owner.violation.split(';').map((violation, index) => (
                   <div key={index} className="violation-item">
                     {violation}
                   </div>
@@ -88,6 +86,8 @@ const Landlords = () => {
         </button>
       </div>
     </div>
+    </>
+    
   );
 };
 
