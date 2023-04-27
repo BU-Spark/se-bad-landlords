@@ -25,7 +25,7 @@ export default function Home() {
               <div className="header-body-p">
                    <p >
                 Apartment buildings that are three or more storeys and 10 or more units are required to register with the City’s RentSafeTO program 
-                and undergo building evaluations. <br></br>During evaluations, staff inspect common areas, mechanical and security systems, 
+                and undergo building evaluations. During evaluations, staff inspect common areas, mechanical and security systems, 
                 parking and exterior grounds. Learn more about building evaluations and audits. Use this tool to look up the evaluation scores of a building.
               </p>
               </div>
