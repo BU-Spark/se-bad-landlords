@@ -47,7 +47,7 @@ export default function Home() {
         <div className="grid">
             <div class="grid-container">
             <div class="grid-item"><span>100</span><br></br> Worst Scofflaw Landlords</div>
-            <div class="grid-item">Interactive<br></br> Map</div>
+            <div class="grid-item">Interactive Map</div>
             <div class="grid-item">Total number of cases <br></br> <span>4,568</span> </div>
             <div class="grid-item">Total number of cases <br></br> <span>1,568</span> </div>
             <div class="grid-item">Total number of cases <br></br> <span>898</span> </div>
