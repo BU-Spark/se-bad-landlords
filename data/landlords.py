@@ -12,6 +12,7 @@ violations = []
 codes = []
 case_nos = []
 loc_ids = []
+ids = []
 
 # Extract data from the geojson features
 for feature in data['features']:
@@ -20,22 +21,24 @@ for feature in data['features']:
     code = feature['properties']['code']
     case_no = feature['properties']['case_no']
     loc_id = feature['properties']['LOC_ID']
+    map_id = feature['properties']['MAP_PAR_ID']
 
     owner1_names.append(owner1_name)
     violations.append(violation)
     codes.append(code)
     case_nos.append(case_no)
     loc_ids.append(loc_id)
+    ids.append(map_id)
 
 # Create a DataFrame from the lists
 df = pd.DataFrame({'owner1_name': owner1_names, 'violation': violations,
                    'code': codes,
-                   'case_no': case_no, 'loc_id': loc_ids})
+                   'case_no': case_no, 'loc_id': loc_ids, 'map_id': ids})
 
 # Group the DataFrame by owner1 names and concatenate the violations, codes, status_nos, case_nos, and loc_ids for each owner1 name
 df_grouped = df.groupby('owner1_name').agg(
     {'violation': '; '.join, 'code': ', '.join,
-     'case_no': ', '.join, 'loc_id': ', '.join}).reset_index()
+     'case_no': ', '.join, 'loc_id': ', '.join, 'map_id': ', '.join}).reset_index()
 
 # Print the resulting DataFrame
 print(df_grouped)

@@ -11,7 +11,7 @@ const Navbar = () => {
           </Link>
         </li>
         <li className="navbar-item">
-          <Link href="/Landlords" passHref>
+          <Link href="/Landlord_Page" passHref>
             <a className="navbar-link">Landlords</a>
           </Link>
         </li>

@@ -151,16 +151,25 @@ const Map = () => {
             data: 'https://kolade2.github.io/Bad-Landlords/data/updated_data.csv.geojson',
             cluster: false,
             clusterMaxZoom: 14, // Max zoom to cluster points on
-            clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+            clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
           });
 
           map.addLayer({
           id: 'unclustered-point',
           type: 'circle', 
           source: 'violations',
-          filter: ['!', ['has', 'point_count']],
+          filter: [
+            'all',
+            [
+              'match',
+              ['get', 'code'],
+              ['CMR410*', 'CRM410*'],
+              false,
+              true
+            ]
+          ],
           paint: {
-              'circle-color': '#11b4da',
+              'circle-color': '#00012e',
               'circle-radius': 4,
               'circle-stroke-width': 2,
               'circle-stroke-color': '#fff'
@@ -171,6 +180,8 @@ const Map = () => {
 
           map.on('click', 'unclustered-point', (e) => {
             const filteredProperties = {};
+            const featureId = e.features[0].id;
+           
             const properties = e.features[0].properties;
             for (const key in properties) {
               if (properties.hasOwnProperty(key) && properties[key] !== "") {
@@ -182,18 +193,34 @@ const Map = () => {
             
               // Update the contents of the popup container
             popupContainer.innerHTML = `
-                <div><strong>Neighborhood:</strong></div>${neighborhood}</div>
-                <div><strong>Name:</strong> ${OWNER1}</div>
-                <div><strong>Code:</strong> ${code}</div>
-                <div><strong>Description:</strong> ${description}</div>
-                <div><strong>Case No:</strong> ${case_no}</div>
-                `;
+                    <div class="popup">
+                      <div class="popup__header"><strong>Neighborhood:</strong></div>
+                      <div class="popup__content">${neighborhood}</div>
+                      <div class="popup__header"><strong>Name:</strong></div>
+                      <div class="popup__content">${OWNER1}</div>
+                      <div class="popup__header"><strong>Code:</strong></div>
+                      <div class="popup__content">${code}</div>
+                      <div class="popup__header"><strong>Description:</strong></div>
+                      <div class="popup__content">${description}</div>
+                      <div class="popup__header"><strong>Case No:</strong></div>
+                      <div class="popup__content">${case_no}</div>
+                    </div>
+                  `;
+
               // Show the popup container
             popupContainer.style.display = 'block';
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
+            // map.setFeatureState({ source: 'violations', id: featureId }, { selected: true });
+            // map.setPaintProperty('unclustered-point', 'circle-color', [
+            //   'case',
+            //   ['boolean', ['feature-state', 'selected'], false],
+            //   '#ff8800'
+            // ]);
+
           });
+
           
           map.on('move', ['unclustered-point', 'neighborhood-fills'], (e) =>{
               const bounds = map.getBounds();
@@ -218,7 +245,7 @@ const Map = () => {
   }, [map]);
   return (
     <div>
-      <div ref={mapContainer} style={{Top: 300, height:550, width:'100%'}}/>
+      <div ref={mapContainer} style={{Top: 300, height:620, width:'100%'}}/>
       <br></br>
       <h2 className ="table-title"> Building violations table</h2>
       <p className="table-text">Datapoints from the Map above displayed on a table</p>

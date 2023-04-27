@@ -3,7 +3,7 @@ import Header from '@components/Header'
 import Footer from '@components/Footer'
 import Navbar from '@components/Navbar'
 import Map from '@components/Map'
-
+import { Grid } from '@mui/material';
 
 
 export default function Home() {
@@ -44,20 +44,30 @@ export default function Home() {
               </nav>   */}
             </div>
         </div>
+        <div className="grid">
+            <div class="grid-container">
+            <div class="grid-item"><span>100</span><br></br> Worst Scofflaw Landlords</div>
+            <div class="grid-item">Interactive<br></br> Map</div>
+            <div class="grid-item">Total number of cases <br></br> <span>4,568</span> </div>
+            <div class="grid-item">Total number of cases <br></br> <span>1,568</span> </div>
+            <div class="grid-item">Total number of cases <br></br> <span>898</span> </div>
+            <div class="grid-item">Total number of cases <br></br> <span>100</span> </div>
+          </div>
+        </div>
+              
         <div className="landing-body">
             <div className="section-title">
                 <h2 className="section-title-header">Bad Landlords Visualization</h2>
             </div>
-            <h3 className="section-header">Buildling violations in Boston neighborhoods</h3>
+            <p className="section-header">Buildling violations in Boston neighborhoods</p>
+            <hr className="hr-index"></hr> 
             <div className="map-container">
                 <Map />
             </div>
             <div id="popupContainer">
-
             </div>
         </div>
       </main>
-
       <Footer />
     </div>
   )
