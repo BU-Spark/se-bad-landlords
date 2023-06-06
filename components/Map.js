@@ -18,7 +18,7 @@ const Map = () => {
   //===============================================
   useEffect(() => {
     // Update table data with violations within map view bounds
-    mapboxgl.accessToken = 'pk.eyJ1Ijoia29sYWRlYWRlZ2JheWUiLCJhIjoiY2xmcHNpMnBrMDFxNzQybzNzcHFrenI5OSJ9.pNixVb7d1UUfPIgmxqoitg';
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3BhcmstYmFkbGFuZGxvcmRzIiwiYSI6ImNsaWpsMXc3ZTA4MGszZXFvaDBrc3I0Z3AifQ.mMM7raXYPneJfzyOoflFfQ';
     const initializeMap = ({ setMap, mapContainer }) => {
       const map = new mapboxgl.Map({
         container: mapContainer.current,
@@ -47,7 +47,7 @@ const Map = () => {
         //=================================================================
         map.addSource('census', {
           type: 'vector',
-          url: 'mapbox://koladeadegbaye.bpyqog0g'
+          url: 'mapbox://spark-badlandlords.cxyyru86'
         });
         
         //===================================================
@@ -59,9 +59,9 @@ const Map = () => {
           'type': 'fill',
           'source': {
             'type': 'vector',
-            'url': 'mapbox://koladeadegbaye.bpyqog0g'
+            'url': 'mapbox://spark-badlandlords.cxyyru86'
           },
-          'source-layer': 'census2020_tracts-baue3k',
+          'source-layer': 'census2020_tracts-4u84f2',
           'paint':{
             'fill-color': 'blue',
             'fill-outline-color': 'red',
@@ -73,21 +73,21 @@ const Map = () => {
     ///////////////////////////////////////////////////////////////////////////////////////
         map.addSource('neighborhoods', {
           type: 'vector',
-          url: 'mapbox://koladeadegbaye.331my0vd'
+          url: 'mapbox://spark-badlandlords.8o9j3v7f'
         });
 
         map.addLayer({
             'id': 'neighborhoods-fills',
             'type': 'fill',
             'source': 'neighborhoods',
-            'source-layer': 'census2020_bg_neighborhoods-bttfiu',
+            'source-layer': 'census2020_bg_neighborhoods-5hyj9i',
             'layout': {},
             'paint': {
-            'fill-color': 'orange',
+            'fill-color': 'blue',
             'fill-opacity': [
             'case',
                 ['boolean', ['feature-state', 'hover'], false],
-                0.8,
+                0.6,
                 0
                 ]
               }
@@ -97,7 +97,7 @@ const Map = () => {
               'id': 'neighborhoods-borders',
               'type': 'line',
               'source': 'neighborhoods',
-              'source-layer': 'census2020_bg_neighborhoods-bttfiu',
+              'source-layer': 'census2020_bg_neighborhoods-5hyj9i',
               'layout': {},
               'paint': {
               'line-color': 'purple',
@@ -110,14 +110,14 @@ const Map = () => {
             if (e.features.length > 0) {
               if (hoveredStateId !== null) {
                 map.setFeatureState(
-                  { source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-bttfiu', id: hoveredStateId },
+                  { source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i', id: hoveredStateId },
                   { hover: false }
                 );
               }
               hoveredStateId = e.features[0].id;
               neighborhood = e.features[0].properties["BlockGr202"]
               map.setFeatureState(
-                { source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-bttfiu', id: hoveredStateId },
+                { source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i', id: hoveredStateId },
                 { hover: true }
               );
             }
@@ -128,7 +128,7 @@ const Map = () => {
           map.on('mouseleave', 'neighborhoods-fills', () => {
             if (hoveredStateId !== null) {
               map.setFeatureState(
-                { source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-bttfiu', id: hoveredStateId },
+                { source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i', id: hoveredStateId },
                 { hover: false }
               );
             }
