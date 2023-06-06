@@ -24,24 +24,20 @@ export default function Home() {
               </div>
               <div className="header-body-p">
                    <p >
-                Apartment buildings that are three or more storeys and 10 or more units are required to register with the City’s RentSafeTO program 
-                and undergo building evaluations. During evaluations, staff inspect common areas, mechanical and security systems, 
-                parking and exterior grounds. Learn more about building evaluations and audits. Use this tool to look up the evaluation scores of a building.
+                  Discover the Truth About Boston's Bad Landlords<br></br> Our Website Exposes Property 
+                  Violations and Brings Transparency to  <br></br>Code Enforcement, Empowering Tenants
+                  and Advocating for a Fair Housing System
               </p>
               </div>
             </div>
             <div className="header-two">
               <h2 className="header-title">Boston Neighborhood Building Evaluation Results</h2> 
-              <hr></hr> 
-              <p>The Office of City Councilor Breadon of District 9 is interested in Bad Landlords in Boston. This website is centered
-                around identifying risky landlords along with correlating factors for the different types of
-                housing violations that these landlords commit. Find out more on the datasets here</p>  
-              
-              {/* <nav className="header-links-container">
-                  <a href="https://data.boston.gov/dataset/building-and-property-violations1" className="link">Building-violations dataset</a>
-                  <a href="https://data.boston.gov/" className="link">| Boston Analyze</a>
-                  <a href="https://data.boston.gov/dataset/property-assessment" className="link">| Property-assessment dataset</a>
-              </nav>   */}
+              <hr></hr>
+              <p>We are dedicated to shedding light on scofflaw code violators in Boston, 
+                empowering residents to make informed decisions about their housing options.
+                We gather data from various sources, including the Boston Property Assessment and Boston
+                Building Violations datasets, to identify properties with multiple violations.
+                </p>
             </div>
         </div>
         <div className="grid">
@@ -54,19 +50,37 @@ export default function Home() {
             <div class="grid-item">Total number of cases <br></br> <span>100</span> </div>
           </div>
         </div>
-              
-        <div className="landing-body">
-            <div className="section-title">
-                <h2 className="section-title-header">Bad Landlords Visualization</h2>
-            </div>
-            <p className="section-header">Buildling violations in Boston neighborhoods</p>
-            <hr className="hr-index"></hr> 
-            <div className="map-container">
-                <Map />
-            </div>
-            <div id="popupContainer">
+        <div className="more-info">
+            <h2>Find out more about us</h2>
+            <hr></hr>
+            <p>
+              Our ultimate goal is to create a trackable system for property violations 
+              and develop a matrix to determine if a landlord is a bad landlord. 
+              With this information, we aim to advocate for stricter enforcement 
+              and more transparent regulations to protect tenants from unsafe and 
+              unhealthy living conditions.
+            </p>
+            <div className="more-info-bottom">
+                <p className="more-info-img">
+                    <div className="image">
+                      
+                    </div>
+                </p>
+                <p className="more-info-text">
+                    Councilor Breadon's mission to increase accessibility and transparency
+                    in the Boston planning and development process aligns with our goals 
+                    of promoting accountability and responsibility among property owners 
+                    and landlords.
+                    Through our website, you can access up-to-date information on property
+                    violations, learn about your rights as a tenant, and join us in advocating
+                    for a fair and just housing system in Boston.
+                    Join our community today and help us make Boston a better place
+                    to live for all residents.
+                </p>
+
             </div>
         </div>
+        
       </main>
       <Footer />
     </div>

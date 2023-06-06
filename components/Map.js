@@ -34,16 +34,13 @@ const Map = () => {
           mapboxgl: mapboxgl
         })
       );
-      
- 
-      
+
       //===============================================
       //load the default map mapbox/streets-v11
       //===============================================
       map.on('load', () => {
         setMap(map);
 
-        
         //=================================================================
         //add census data information from mapbox studio to map as a source
         //url should be the mapbox://{tileset-ID}
@@ -68,16 +65,9 @@ const Map = () => {
           'paint':{
             'fill-color': 'blue',
             'fill-outline-color': 'red',
-            'fill-opacity': 0.5
+            'fill-opacity': 0.3
           }
         });
-        // map.on('mousemove', 'census-block-layer', (e) => {
-        //   if (e.features.length > 0) {
-        //       hoveredStateId = e.features[0].id;
-        //       census_tract_no = e.features[0].properties["TRACTCE20"]
-        //     }
-
-        //   });
 
     //NEIGHBORHOODS LAYER CODE
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -93,11 +83,11 @@ const Map = () => {
             'source-layer': 'census2020_bg_neighborhoods-bttfiu',
             'layout': {},
             'paint': {
-            'fill-color': 'blue',
+            'fill-color': 'orange',
             'fill-opacity': [
             'case',
                 ['boolean', ['feature-state', 'hover'], false],
-                0.5,
+                0.8,
                 0
                 ]
               }
@@ -169,10 +159,10 @@ const Map = () => {
             ]
           ],
           paint: {
-              'circle-color': '#00012e',
-              'circle-radius': 4,
-              'circle-stroke-width': 2,
-              'circle-stroke-color': '#fff'
+              'circle-color': 'white',
+              'circle-radius': 3,
+              'circle-stroke-width': 1.5,
+              'circle-stroke-color': 'purple'
           }
           });
           
@@ -212,13 +202,6 @@ const Map = () => {
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
-            // map.setFeatureState({ source: 'violations', id: featureId }, { selected: true });
-            // map.setPaintProperty('unclustered-point', 'circle-color', [
-            //   'case',
-            //   ['boolean', ['feature-state', 'selected'], false],
-            //   '#ff8800'
-            // ]);
-
           });
 
           

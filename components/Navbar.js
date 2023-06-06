@@ -16,13 +16,8 @@ const Navbar = () => {
           </Link>
         </li>
         <li className="navbar-item">
-          <Link href="/map" passHref>
+          <Link href="/mapPage" passHref>
             <a className="navbar-link">Map</a>
-          </Link>
-        </li>
-        <li className="navbar-item">
-          <Link href="/contact" passHref>
-            <a className="navbar-link">Contact</a>
           </Link>
         </li>
       </ul>
