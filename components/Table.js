@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { DataGrid, GridToolbar} from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
+// Table component
 const Table = ({ data }) => {
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
@@ -21,34 +22,35 @@ const Table = ({ data }) => {
   };
 
   const columns = [
-    { field: 'id', headerName: 'OwnerID', width:100},
+    { field: 'id', headerName: 'OwnerID', width: 100 },
     { field: 'owner', headerName: 'Landlord', width: 250 },
     { field: 'neighborhood', headerName: 'Neighborhood', width: 150 },
     { field: 'code', headerName: 'Code', width: 150 },
     {
       field: 'case_no',
-      headerName: 'case_number',
+      headerName: 'Case Number',
       type: 'number',
       width: 150,
     },
-    { field: 'description', headerName: 'Violation description', width: 450 }
+    { field: 'description', headerName: 'Violation Description', width: 450 },
   ];
 
   return (
-    <div id="data-table" style={{width: 'auto', height: '60vh'}}>
+    <div id="data-table" style={{ width: 'auto', height: '60vh' }}>
       <DataGrid
         rows={rows}
         columns={columns}
-        pageSize={10}
+        pageSize={10}h
         rowsPerPageOptions={[5]}
-      slots={{
+        // Render the toolbar with grid options
+        components={{
           toolbar: GridToolbar,
         }}
-      
-     />
+        // Handle page change event
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
 
 export default Table;
-

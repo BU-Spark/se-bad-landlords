@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import Modal from '@mui/material/Modal';
 
+// Landlords component
 const Landlords = ({ ownersData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   // const [landlordsPerPage] = useState(10);
@@ -46,7 +47,6 @@ const Landlords = ({ ownersData }) => {
   const [selectedOwner, setSelectedOwner] = useState(null);
   const [open, setOpen] = useState(false);
 
-
   const handleOpenModal = (owner) => {
     setSelectedOwner(owner);
     setOpen(true);
@@ -57,7 +57,6 @@ const Landlords = ({ ownersData }) => {
     setOpen(false);
   };
 
-
   const PAGE_SIZE = 10;
   const lastPageIndex = Math.ceil(topOwners.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
@@ -65,9 +64,11 @@ const Landlords = ({ ownersData }) => {
  
   return (
     <div className="landlords-list">
+      {/* Display top owners */}
       {topOwners.slice(startIndex, endIndex).map(({ name, count }) => (
         <div className="landlord" key={name}>
           <div className="landlord-title-container">
+            {/* Owner icon */}
             <p className="contacts-icon">
               <ContactsIcon fontSize="large" />
             </p>
@@ -77,6 +78,7 @@ const Landlords = ({ ownersData }) => {
             </button>
           </div>
           <hr className="landlords-hr"></hr>
+          {/* Display violations per owner */}
           {ownersData
             .filter((item) => item.owner1_name === name)
             .slice(0, 10)
@@ -91,6 +93,7 @@ const Landlords = ({ ownersData }) => {
       ))}
       
       <div className="pagination-buttons">
+        {/* Pagination */}
         {Array.from({ length: 10 }, (_, index) => (
           <button
             key={index}
@@ -102,10 +105,12 @@ const Landlords = ({ ownersData }) => {
         ))}
       </div>
       <br></br>
+      {/* Modal for displaying violations */}
       {selectedOwner && (
         <Modal className="modal-content" open={Boolean(selectedOwner)} handleClose={handleCloseModal}>
           <>
           <button onClick={handleCloseModal}>Close</button>
+          {/* Display violations per selected owner */}
           {ownersData
             .filter((item) => item.owner1_name === name)
             .slice(0, 10)
