@@ -41,13 +41,13 @@ export default function Home() {
             </div>
         </div>
         <div className="grid">
-            <div class="grid-container">
-            <div class="grid-item"><span>100</span><br></br> Worst Scofflaw Landlords</div>
-            <div class="grid-item">Interactive Map</div>
-            <div class="grid-item">Total number of cases <br></br> <span>4,568</span> </div>
-            <div class="grid-item">Total number of cases <br></br> <span>1,568</span> </div>
-            <div class="grid-item">Total number of cases <br></br> <span>898</span> </div>
-            <div class="grid-item">Total number of cases <br></br> <span>100</span> </div>
+            <div className="grid-container">
+            <div className="grid-item"><span>100</span><br></br> Worst Scofflaw Landlords</div>
+            <div className="grid-item">Interactive Map</div>
+            <div className="grid-item">Total number of cases <br></br> <span>4,568</span> </div>
+            <div className="grid-item">Total number of cases <br></br> <span>1,568</span> </div>
+            <div className="grid-item">Total number of cases <br></br> <span>898</span> </div>
+            <div className="grid-item">Total number of cases <br></br> <span>100</span> </div>
           </div>
         </div>
         <div className="more-info">
@@ -61,11 +61,11 @@ export default function Home() {
               unhealthy living conditions.
             </p>
             <div className="more-info-bottom">
-                <p className="more-info-img">
+                <div className="more-info-img">
                     <div className="image">
                       
                     </div>
-                </p>
+                </div>
                 <p className="more-info-text">
                     Councilor Breadon's mission to increase accessibility and transparency
                     in the Boston planning and development process aligns with our goals 
