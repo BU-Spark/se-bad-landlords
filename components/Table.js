@@ -8,7 +8,6 @@ const Table = ({ data }) => {
 
   // Calculate the number of rows to display per page
   const rowsPerPage = 25;
-
   // Update the rows state based on the current page
   useEffect(() => {
     const startIndex = page * rowsPerPage;

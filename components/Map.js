@@ -204,28 +204,30 @@ const Map = () => {
                 }
           });
 
-          
+          // setPrevData(tableData);
+
           map.on('move', ['unclustered-point', 'neighborhood-fills'], (e) =>{
-              const bounds = map.getBounds();
-              const features = map.queryRenderedFeatures({ bounds });
-              const violationsData = features.map(e => ({
-                id: e.properties.OID_, // or any other unique identifier for the row
-                neighborhood: neighborhood,
-                owner: e.properties.OWNER1, // replace with actual property name
-                code: e.properties.code, // replace with actual property name
-                description: e.properties.description,
-                case_no: e.properties.case_no
-                // add more properties as needed
-                }));
-                console.log(violationsData);
-                setTableData(violationsData);
+            const bounds = map.getBounds();
+            const features = map.queryRenderedFeatures({ bounds }).filter(feat => feat.properties.OID_);
+            const violationsData = features.map(e => ({
+              id: e.properties.OID_, // or any other unique identifier for the row
+              neighborhood: neighborhood,
+              owner: e.properties.OWNER1, // replace with actual property name
+              code: e.properties.code, // replace with actual property name
+              description: e.properties.description,
+              case_no: e.properties.case_no
+              // add more properties as needed
+            }));
+            console.log(violationsData);
+            setTableData(violationsData);
           })
-           
-      }); 
+            
+          }); 
     };
 
     if (!map) initializeMap({ setMap, mapContainer });
   }, [map]);
+
   return (
     <div>
       <div ref={mapContainer} style={{Top: 300, height:620, width:'100%'}}/>
