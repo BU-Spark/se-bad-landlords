@@ -204,10 +204,10 @@ const Map = () => {
                 }
           });
 
-          // setPrevData(tableData);
-
           map.on('move', ['unclustered-point', 'neighborhood-fills'], (e) =>{
             const bounds = map.getBounds();
+            // property ID is used as unique id for the table, undefined id will cause error
+            // filter out features with undefined property ID
             const features = map.queryRenderedFeatures({ bounds }).filter(feat => feat.properties.OID_);
             const violationsData = features.map(e => ({
               id: e.properties.OID_, // or any other unique identifier for the row
@@ -218,7 +218,6 @@ const Map = () => {
               case_no: e.properties.case_no
               // add more properties as needed
             }));
-            console.log(violationsData);
             setTableData(violationsData);
           })
             
