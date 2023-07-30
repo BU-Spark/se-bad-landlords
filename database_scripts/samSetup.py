@@ -1,5 +1,5 @@
 # Total execution time: 333.5433614253998 seconds
-# samSetup script updates the table with existing values
+# samSetup script updates the existing table
 # if you need the table to be deleted use the commented at line 45
 import time
 import requests

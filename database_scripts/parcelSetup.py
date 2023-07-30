@@ -1,66 +1,97 @@
+# Total executed time: 82.87679433822632 seconds
+# parcelSetup script updates the existing table
+# if you need the table to be deleted use the commented at line 44
+import time
 import requests
-from sqlalchemy import create_engine, MetaData, Table, Column, Text, Integer, exc
+import csv
+from bs4 import BeautifulSoup
+from sqlalchemy import create_engine, MetaData, Table, Column, Text, exc
+from sqlalchemy.dialects.postgresql import insert
 
-# Script deletes the current parcel table and replace it with a new one
-# Currently storing 98964 rows everytime it runs (2023-07-13)
-def json_to_table(api, table_name):
-    engine = create_engine("postgresql://postgres:postgres@localhost:5432/badlandlords")
+DATASET_URL = 'https://data.boston.gov/dataset/parcels-2023'
+DB = "postgresql://postgres:postgres@localhost:5432/badlandlords"
+CSV_FILENAME = 'parcel.csv'
+
+# download_csv downloads the csv file locally in same directory
+# we use bs4 to get the download link for the csv file from DATASET_URL
+def download_csv():
+    response = requests.get(DATASET_URL)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    resource_list = soup.find('ul', class_='resource-list')
+    # this is the second download button for csv file
+    csv_url = resource_list.find_all('li', class_='resource-item')[1].find('div', class_='btn-group').find_all('a')[1]['href']
+
+    # download the csv file in chunks because it can be large
+    # it used wb to overwrite old parcel.csv
+    with requests.get(csv_url, stream=True) as r:
+        r.raise_for_status()
+        with open(CSV_FILENAME, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192): 
+                f.write(chunk)
+
+def csv_to_table(csv_file, table_name):
+    engine = create_engine(DB)
     metadata = MetaData()
 
-    # fetch data from api link
-    response = requests.get(api)
-    data = response.json()
+    # specify the headers you will like to pull
+    desired_headers = ['MAP_PAR_ID', "Shape_STArea__", "Shape_STLength__", "Shape_Length", "Shape_Area"]
 
-    headers = data['result']['fields']
+    with open(csv_file, newline='') as f:
+        reader = csv.reader(f)
+        headers = next(reader)
 
-    types = {
-        'text': Text,
-        'int': Integer,
-    }
+        # use this if you want to drop the table and create a fresh one
+        # try:
+        #     table = Table(table_name, metadata, autoload_with=engine)
+        #     table.drop(engine)
+        # except exc.NoSuchTableError:
+        #     pass
+        # metadata.clear()
 
-    # drop table
-    try:
-        table = Table(table_name, metadata, autoload_with=engine)
-        table.drop(engine)
-    except exc.NoSuchTableError:
-        pass
-    metadata.clear()
+        table = Table(
+            table_name,
+            metadata,
+            *[Column(header, Text, primary_key=(header == 'MAP_PAR_ID')) for header in headers if header in desired_headers]
+        )
 
-    # create the table
-    table = Table(
-        table_name, 
-        metadata, 
-        *[Column(header['id'], types[header['type']]) for header in headers]
-    )
+        metadata.create_all(engine)
 
-    metadata.create_all(engine)
+        conn = engine.connect()
+        trans = conn.begin()
 
-
-    conn = engine.connect()
-    trans = conn.begin()
-    try:
-        while True:
-            for record in data['result']['records']:
-                # test case to see record data
-                # print(record)
-                ins = table.insert().values(**record)
+        try:
+            for row in reader:
+                data = {header: val for header, val in zip(headers, row) if header in desired_headers} # this part cherry picks values with header name
+                ins = insert(table).values(data).on_conflict_do_update(
+                    index_elements=['MAP_PAR_ID'],
+                    set_=data
+                )
                 conn.execute(ins)
-
-            # this will look for next page link but break if current page has empty records
-            if '_links' in data['result'] and 'next' in data['result']['_links'] and data['result']['records']:
-                response = requests.get('https://data.boston.gov' + data['result']['_links']['next'])
-                data = response.json()
-            else:
-                break
-        trans.commit()
-    except:
-        trans.rollback()
-        raise
+            # you can use below for testing first 100 rows
+            # for i, row in enumerate(reader):
+            #     if i >= 100:
+            #         break
+            #     data = {header: val for header, val in zip(headers, row) if header in desired_headers} # this part cherry picks values with header name
+            #     ins = insert(table).values(data).on_conflict_do_update(
+            #         index_elements=['MAP_PAR_ID'],
+            #         set_=data
+            #     )
+            #     conn.execute(ins)
+            trans.commit()
+        except:
+            trans.rollback()
+            raise
 
 def main():
-    api = 'https://data.boston.gov/api/3/action/datastore_search?resource_id=0cca9f65-69d7-4372-84c2-692178afc2b8'
+    start_time = time.time()
+
+    download_csv()
     table_name = 'parcel'
-    json_to_table(api, table_name)
+    csv_to_table(CSV_FILENAME, table_name)
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f'Total executed time: {elapsed_time} seconds')
 
 if __name__ == "__main__":
     main()
