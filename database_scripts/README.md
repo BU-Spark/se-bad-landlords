@@ -3,7 +3,7 @@
 First, create virtual environment.
 1. `pip install virtualenv`
 2. `virtualenv venv`
-3. `source venv/Scripts/activate`
+3. `source venv/Scripts/activate` - this can be different depending on where you install your venv
 
 Then, install dependencies. You can either 1 or 2.
 1. `pip install -r requirements.txt`
@@ -22,8 +22,9 @@ Depending on client's need this script should run most often.
 
 ### Parcel
 To setup Parcel dataset run `python parcelSetup.py`.
-Parcel dataset updates yearly. Change the api link inside the script to update to newest one.
-At the moment it uses Parcel 2023, but you should change to different api link when 2024 one releases.
+`parcelSetup.py` api version was working, but the api is blocked. So, this uses csv implementation.
+Parcel dataset updates yearly. Change the dataset link inside the script to update to newest one.
+At the moment it uses Parcel 2023, but you should change to different dataset link when 2024 one releases.
 
 ### Property Assessment
 To setup Property Assessment dataset run `python propertySetup.py`.
