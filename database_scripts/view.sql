@@ -10,7 +10,6 @@ select
     property."UNIT_NUM",
     property."CITY",
     property."OWNER",
-    parcel."LOC_ID",
     parcel."Shape_STArea__",
     parcel."Shape_STLength__",
     parcel."Shape_Length",
@@ -28,7 +27,7 @@ select
 from property property
 join parcel parcel on property."PID" = parcel."MAP_PAR_ID"
 join sam sam on property."PID" = sam."PARCEL"
-join "BPV" bpv on sam."SAM_ADDRESS_ID" = bpv."sam_id"
+join bpv bpv on sam."SAM_ADDRESS_ID" = bpv."sam_id"
 where cast(property."year" as integer) between 2020 and 2023;
 
 --select * from sam sam;
@@ -48,7 +47,7 @@ select
 from sam sam
 join property property on sam."PARCEL" = property."PID"
 join parcel parcel on sam."PARCEL" = parcel."MAP_PAR_ID"
-join "BPV" bpv on sam."SAM_ADDRESS_ID" = bpv."sam_id"
+join bpv bpv on sam."SAM_ADDRESS_ID" = bpv."sam_id"
 where cast(property."year" as integer) between 2020 and 2023
 group by property."OWNER", property."PID", property."CITY", sam."FULL_ADDRESS", sam."ZIP_CODE"
 having COUNT(bpv."sam_id") > 5
