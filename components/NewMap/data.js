@@ -71,7 +71,7 @@ export const unclusteredViolationsLayer = {
   ],
   paint: {
     'circle-color': 'white',
-    'circle-radius': 3,
+    'circle-radius': 4,
     'circle-stroke-width': 1.5,
     'circle-stroke-color': 'purple'
   }
