@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@components/Navbar';
 import Map from '@components/Map';
-
+import NewMap from '@components/NewMap';
 const MapPage = () => {
     
   return (
@@ -17,6 +17,7 @@ const MapPage = () => {
             <div className="map-container">
                 <Map />
             </div>
+            <NewMap />
             <div id="popupContainer">
             </div>
         </div>
