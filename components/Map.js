@@ -141,7 +141,7 @@ const Map = () => {
             data: 'https://kolade2.github.io/Bad-Landlords/data/updated_data.csv.geojson',
             cluster: false,
             clusterMaxZoom: 14, // Max zoom to cluster points on
-            clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+            clusterRadius: 150, // Radius of each cluster when clustering points (defaults to 50)
           });
 
           map.addLayer({
@@ -231,11 +231,11 @@ const Map = () => {
     <div>
       <div ref={mapContainer} style={{Top: 300, height:620, width:'100%'}}/>
       <br></br>
-      <h2 className ="table-title"> Building violations table</h2>
+      {/* <h2 className ="table-title"> Building violations table</h2>
       <p className="table-text">Datapoints from the Map above displayed on a table</p>
       <div className="Table">
            <Table data={tableData}/>
-      </div>
+      </div> */}
      
     </div>
   );
