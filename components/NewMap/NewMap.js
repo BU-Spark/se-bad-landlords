@@ -23,7 +23,8 @@ const NewMap = () => {
         }}
         style={{
           width: '100%',
-          height: 620
+          height: 620,
+          top: 30
         }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken="pk.eyJ1Ijoic3BhcmstYmFkbGFuZGxvcmRzIiwiYSI6ImNsaWpsMXc3ZTA4MGszZXFvaDBrc3I0Z3AifQ.mMM7raXYPneJfzyOoflFfQ"
