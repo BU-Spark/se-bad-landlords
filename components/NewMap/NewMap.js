@@ -23,7 +23,6 @@ const NewMap = () => {
         }}
         style={{
           width: '100%',
-          top: 100,
           height: 620
         }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
@@ -40,9 +39,12 @@ const NewMap = () => {
           id='violations' 
           type='geojson' 
           data={violationsData.url}
+          cluster={true}
+          clusterMaxZoom={14}
+          clusterRadius={50}
         >
-          {/* <Layer {...clusteredViolationsLayer} />
-          <Layer {...clusterViolationsCountLayer} /> */}
+          <Layer {...clusteredViolationsLayer} />
+          <Layer {...clusterViolationsCountLayer} />
           <Layer {...unclusteredViolationsLayer} />
         </Source>
       </Map>

@@ -66,15 +66,8 @@ export const unclusteredViolationsLayer = {
   type: 'circle',
   source: 'violationsData',
   filter: [
-    'all',
-    [
-      'match',
-      // 'point_count',
-      ['get', 'code'],
-      ['CMR410*', 'CRM410*'],
-      false,
-      true
-    ]
+    '!',
+    ['has', 'point_count']
   ],
   paint: {
     'circle-color': 'white',
