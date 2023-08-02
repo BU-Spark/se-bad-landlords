@@ -3,8 +3,13 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { blockLayer, 
   neighborhoodsLayer, 
   neighborhoodsBordersLayer,
+  unclusteredViolationsLayer,
+  clusteredViolationsLayer,
+  clusterViolationsCountLayer,
   neighborhoodsData,
-  censusData } 
+  censusData,
+  violationsData,
+ } 
 from './data';
 
 const NewMap = () => {
@@ -30,6 +35,15 @@ const NewMap = () => {
         <Source id="neighborhoods" type="vector" url={neighborhoodsData.url} >
           <Layer {...neighborhoodsLayer} />
           <Layer {...neighborhoodsBordersLayer} />
+        </Source>
+        <Source 
+          id='violations' 
+          type='geojson' 
+          data={violationsData.url}
+        >
+          {/* <Layer {...clusteredViolationsLayer} />
+          <Layer {...clusterViolationsCountLayer} /> */}
+          <Layer {...unclusteredViolationsLayer} />
         </Source>
       </Map>
     </>
