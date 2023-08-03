@@ -1,11 +1,13 @@
-# Total execution time: 333.5433614253998 seconds
+# Initialization time: 584.3434202671051 seconds
+# Update time: 240.90236258506775 seconds
 # samSetup script updates the existing table
-# if you need the table to be deleted use the commented at line 45
+# if you need the table to be deleted use the commented out code at line 51
 import time
 import requests
 import csv
 from bs4 import BeautifulSoup
-from sqlalchemy import create_engine, MetaData, Table, Column, Text, exc
+import hashlib
+from sqlalchemy import create_engine, MetaData, Table, Column, Text, exc, text
 from sqlalchemy.dialects.postgresql import insert
 
 DATASET_URL = 'https://data.boston.gov/dataset/live-street-address-management-sam-addresses'
@@ -28,6 +30,10 @@ def download_csv():
         with open(CSV_FILENAME, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192): 
                 f.write(chunk)
+
+# encodes row_data to hash values
+def compute_hash(row_data):
+    return hashlib.md5(str(row_data).encode()).hexdigest()
 
 # get csv datasets to database table
 def csv_to_table(csv_file, table_name):
@@ -64,22 +70,44 @@ def csv_to_table(csv_file, table_name):
         try:
             for row in reader:
                 data = {header: val for header, val in zip(headers, row) if header in desired_headers} # this part cherry picks values with header name
-                ins = insert(table).values(data).on_conflict_do_update(
-                    index_elements=['SAM_ADDRESS_ID'],
-                    set_=data
-                )
-                conn.execute(ins)
+
+                # search for the existing row
+                query = text('SELECT * FROM sam WHERE "SAM_ADDRESS_ID" = :sam_address_id')
+                params = {"sam_address_id": data["SAM_ADDRESS_ID"]}
+                existing_row = conn.execute(query, params).fetchone()
+
+                # encode the values new data and exisitng_row to hash
+                new_data_hash = compute_hash(tuple(data.values()))
+                existing_row_hash = compute_hash(existing_row)
+
+                if existing_row_hash != new_data_hash:
+                    ins = insert(table).values(data).on_conflict_do_update(
+                        index_elements=['SAM_ADDRESS_ID'],
+                        set_=data
+                    )
+                    conn.execute(ins)
             # you can use below for testing first 100 rows
             # for i, row in enumerate(reader):
             #     if i >= 100:
             #         break
             #     data = {header: val for header, val in zip(headers, row) if header in desired_headers} # this part cherry picks values with header name
-            #     ins = insert(table).values(data).on_conflict_do_update(
-            #         index_elements=['SAM_ADDRESS_ID'],
-            #         set_=data
-            #     )
-            #     conn.execute(ins)
-            # trans.commit()
+                
+            #     # search for the existing row
+            #     query = text('SELECT * FROM sam WHERE "SAM_ADDRESS_ID" = :sam_address_id')
+            #     params = {"sam_address_id": data["SAM_ADDRESS_ID"]}
+            #     existing_row = conn.execute(query, params).fetchone()
+
+            #     # encode the values new data and exisitng_row to hash
+            #     new_data_hash = compute_hash(tuple(data.values()))
+            #     existing_row_hash = compute_hash(existing_row)
+
+            #     if existing_row_hash != new_data_hash:
+            #         ins = insert(table).values(data).on_conflict_do_update(
+            #             index_elements=['SAM_ADDRESS_ID'],
+            #             set_=data
+            #         )
+            #         conn.execute(ins)
+            trans.commit()
         except:
             trans.rollback()
             raise
