@@ -76,6 +76,9 @@ def json_to_table(api, table_name, year, columns_dict):
                         set_={key: record_custom[key] for key in record_custom.keys() if key != 'year'}
                     )
                     conn.execute(ins)
+            trans.commit() # uploads each page data before next page
+            trans = conn.begin()
+            
             # this will look for next page link but break if current page has empty records
             # comment this out and add a break line above to only get first 100 values from api
             if '_links' in data['result'] and 'next' in data['result']['_links'] and data['result']['records']:
@@ -83,7 +86,6 @@ def json_to_table(api, table_name, year, columns_dict):
                 data = response.json()
             else:
                 break
-        trans.commit()
     except:
         trans.rollback()
         raise

@@ -1,7 +1,7 @@
 # Initialization time: 82.87679433822632 seconds
 # Update time: 59.67661738395691 seconds
+# Railway initialization time: 301 minutes
 # parcelSetup script updates the existing table
-# if you need the table to be deleted use the commented out code at line 52
 import time
 import requests
 import csv
@@ -48,14 +48,6 @@ def csv_to_table(csv_file, table_name):
         reader = csv.reader(f)
         headers = next(reader)
 
-        # use this if you want to drop the table and create a fresh one
-        # try:
-        #     table = Table(table_name, metadata, autoload_with=engine)
-        #     table.drop(engine)
-        # except exc.NoSuchTableError:
-        #     pass
-        # metadata.clear()
-
         table = Table(
             table_name,
             metadata,
@@ -66,30 +58,11 @@ def csv_to_table(csv_file, table_name):
 
         conn = engine.connect()
         trans = conn.begin()
-
         try:
-            for row in reader:
-                data = {header: val for header, val in zip(headers, row) if header in desired_headers} # this part cherry picks values with header name
-
-                # search for the existing row
-                query = text('SELECT * FROM parcel WHERE "MAP_PAR_ID" = :map_par_id')
-                params = {"map_par_id": data["MAP_PAR_ID"]}
-                existing_row = conn.execute(query, params).fetchone()
-
-                # encode the values new data and exisitng_row to hash
-                new_data_hash = compute_hash(tuple(data.values()))
-                existing_row_hash = compute_hash(existing_row)
-
-                if existing_row_hash != new_data_hash:
-                    ins = insert(table).values(data).on_conflict_do_update(
-                        index_elements=['MAP_PAR_ID'],
-                        set_=data
-                    )
-                    conn.execute(ins)
-            # # you can use below for testing first 100 rows
             for i, row in enumerate(reader):
-                if i >= 100:
-                    break
+                # you can use below for testing first 100 rows
+                # if i >= 100:
+                #     break
                 data = {header: val for header, val in zip(headers, row) if header in desired_headers} # this part cherry picks values with header name
 
                 # search for the existing row
@@ -107,7 +80,11 @@ def csv_to_table(csv_file, table_name):
                         set_=data
                     )
                     conn.execute(ins)
-            trans.commit()
+                # uploads every 100 data
+                if i % 100 == 0:
+                    trans.commit()
+                    trans = conn.begin()
+            trans.commit() # uploads the rest of the data
         except:
             trans.rollback()
             raise

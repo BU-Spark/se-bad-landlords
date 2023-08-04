@@ -1,7 +1,8 @@
-# Initialization time: 44.92134499549866 seconds
-# Update time: 31.074703454971313 seconds
+# Local initialization time: 44.92134499549866 seconds
+# Local update time: 31.074703454971313 seconds
+# Railway initialization time: 44 minutes
+# Railway update time: 23 minutes
 # bpvSetup script updates the existing table
-# if you need the table to be deleted use the commented out code at line 39
 import time
 import requests
 import hashlib
@@ -34,14 +35,6 @@ def json_to_table(api, table_name):
 
     # specify the headers you will like to pull
     desired_headers = ['code', 'longitude', 'sam_id', 'status_dttm', 'latitude', 'status', 'description', 'case_no']
-
-    # use this if you want to drop the table and create a fresh one
-    # try:
-    #     table = Table(table_name, metadata, autoload_with=engine)
-    #     table.drop(engine)
-    # except exc.NoSuchTableError:
-    #     pass
-    # metadata.clear()
 
     # create the table
     table = Table(
@@ -76,6 +69,9 @@ def json_to_table(api, table_name):
                         set_=record
                     )
                     conn.execute(ins)
+            trans.commit() # uploads each page data before next page
+            trans = conn.begin()
+
             # this will look for next page link but break if current page has empty records
             # comment this out and the while loop to test first 100 values
             if '_links' in data['result'] and 'next' in data['result']['_links'] and data['result']['records']:
@@ -83,7 +79,6 @@ def json_to_table(api, table_name):
                 data = response.json()
             else:
                 break
-        trans.commit()
     except:
         trans.rollback()
         raise
