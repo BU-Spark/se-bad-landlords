@@ -141,7 +141,7 @@ const Map = () => {
             data: 'https://kolade2.github.io/Bad-Landlords/data/updated_data.csv.geojson',
             cluster: false,
             clusterMaxZoom: 14, // Max zoom to cluster points on
-            clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+            clusterRadius: 150, // Radius of each cluster when clustering points (defaults to 50)
           });
 
           map.addLayer({
@@ -204,37 +204,38 @@ const Map = () => {
                 }
           });
 
-          
           map.on('move', ['unclustered-point', 'neighborhood-fills'], (e) =>{
-              const bounds = map.getBounds();
-              const features = map.queryRenderedFeatures({ bounds });
-              const violationsData = features.map(e => ({
-                id: e.properties.OID_, // or any other unique identifier for the row
-                neighborhood: neighborhood,
-                owner: e.properties.OWNER1, // replace with actual property name
-                code: e.properties.code, // replace with actual property name
-                description: e.properties.description,
-                case_no: e.properties.case_no
-                // add more properties as needed
-                }));
-                console.log(violationsData);
-                setTableData(violationsData);
+            const bounds = map.getBounds();
+            // property ID is used as unique id for the table, undefined id will cause error
+            // filter out features with undefined property ID
+            const features = map.queryRenderedFeatures({ bounds }).filter(feat => feat.properties.OID_);
+            const violationsData = features.map(e => ({
+              id: e.properties.OID_, // or any other unique identifier for the row
+              neighborhood: neighborhood,
+              owner: e.properties.OWNER1, // replace with actual property name
+              code: e.properties.code, // replace with actual property name
+              description: e.properties.description,
+              case_no: e.properties.case_no
+              // add more properties as needed
+            }));
+            setTableData(violationsData);
           })
-           
-      }); 
+            
+          }); 
     };
 
     if (!map) initializeMap({ setMap, mapContainer });
   }, [map]);
+
   return (
     <div>
       <div ref={mapContainer} style={{Top: 300, height:620, width:'100%'}}/>
       <br></br>
-      <h2 className ="table-title"> Building violations table</h2>
+      {/* <h2 className ="table-title"> Building violations table</h2>
       <p className="table-text">Datapoints from the Map above displayed on a table</p>
       <div className="Table">
            <Table data={tableData}/>
-      </div>
+      </div> */}
      
     </div>
   );
