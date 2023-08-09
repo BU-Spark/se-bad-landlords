@@ -1,5 +1,6 @@
 # Initialization time: 584.3434202671051 seconds
 # Update time: 240.90236258506775 seconds
+# Railway initialization time: 974 minutes
 # samSetup script updates the existing table
 import time
 import requests
@@ -40,7 +41,7 @@ def csv_to_table(csv_file, table_name):
     metadata = MetaData()
 
     # specify the headers you will like to pull
-    desired_headers = ['SAM_ADDRESS_ID', 'FULL_ADDRESS', 'MAILING_NEIGHBORHOOD', 'ZIP_CODE', 'PARCEL']
+    desired_headers = ['SAM_ADDRESS_ID', 'FULL_ADDRESS', 'MAILING_NEIGHBORHOOD', 'ZIP_CODE', 'X_COORD', 'Y_COORD', 'PARCEL']
 
     with open(csv_file, newline='') as f:
         reader = csv.reader(f)

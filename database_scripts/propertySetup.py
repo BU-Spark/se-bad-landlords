@@ -82,7 +82,7 @@ def json_to_table(api, table_name, year, columns_dict):
             # this will look for next page link but break if current page has empty records
             # comment this out and add a break line above to only get first 100 values from api
             if '_links' in data['result'] and 'next' in data['result']['_links'] and data['result']['records']:
-                response = requests.get(BASE_API_URL + data['result']['_links']['next'])
+                response = requests.get(BASE_API_URL + data['result']['_links']['next'], timeout=10) # this needs some timeout as it gives error sometimes
                 data = response.json()
             else:
                 break
