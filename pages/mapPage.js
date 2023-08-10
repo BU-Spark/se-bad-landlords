@@ -15,7 +15,7 @@ const MapPage = ({ landlords }) => {
   // call /api/searchAddress with address parameter as input
   const fetchAddressSuggestions = async (searchAddress) => {
     try {
-      const res = await fetch(`/api/searchAddress?address=${searchAddress}`);
+      const res = await fetch(`/api/addresses?search=${searchAddress}`);
       if (res.ok) {
         const suggestions = await res.json();
         setAddressSuggestions(suggestions);
@@ -88,9 +88,10 @@ const MapPage = ({ landlords }) => {
 
 export const getStaticProps = async () => {
   try {
-    const res = await fetch(`${base_url}/api/getBadLandlords`);
+    const res = await fetch(`${base_url}/api/landlords/top-ten`);
     if (res.ok) {
       const landlords = await res.json();
+      console.log(landlords)
       return { props: { landlords } };
     }
     
