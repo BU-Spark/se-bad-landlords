@@ -42,7 +42,7 @@ def csv_to_table(csv_file, table_name):
     metadata = MetaData()
 
     # specify the headers you will like to pull
-    desired_headers = ['MAP_PAR_ID', "Shape_STArea__", "Shape_STLength__", "Shape_Length", "Shape_Area"]
+    desired_headers = ['MAP_PAR_ID', "LOC_ID", "Shape_STArea__", "Shape_STLength__", "Shape_Length", "Shape_Area"]
 
     with open(csv_file, newline='') as f:
         reader = csv.reader(f)

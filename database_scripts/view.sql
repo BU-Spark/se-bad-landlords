@@ -10,6 +10,7 @@ select
     property."UNIT_NUM",
     property."CITY",
     property."OWNER",
+    parcel."LOC_ID",
     parcel."Shape_STArea__",
     parcel."Shape_STLength__",
     parcel."Shape_Length",
