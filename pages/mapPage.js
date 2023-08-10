@@ -91,7 +91,6 @@ export const getStaticProps = async () => {
     const res = await fetch(`${base_url}/api/landlords/top-ten`);
     if (res.ok) {
       const landlords = await res.json();
-      console.log(landlords)
       return { props: { landlords } };
     }
     
