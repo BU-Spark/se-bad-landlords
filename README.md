@@ -50,6 +50,15 @@ Important Notes
   - This is the search feature on the map page that allows you to locate points by address
 - Google doc with more information: https://docs.google.com/document/d/1xmPJJ7fR8X6g3dA58RCjWSGqD0B-ipqMu-uVj3tB8N0/edit
 
+## API List
+
+There are three api routes.
+
+1. `/api/geojson/map-points` : Returns geoJson format of data points need to create the map.
+
+2. `/api/landlords/top-ten` : Fetches violation_view view during the build time.
+
+3. `/api/addresses?search=QUERY` : Fetches addesses that are similar to what user input in the search input box.
 
 ## Below is information about the nextjs and netlify setup 
 # Next + Netlify Starter
