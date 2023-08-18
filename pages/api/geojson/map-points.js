@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         bpv."longitude",
         bpv."sam_id"
       from bpv bpv
-      where bpv."status_dttm" > '2023-01-01 00:00:00'`;
+      where bpv."status_dttm" BETWEEN '2023-01-01 00:00:00' AND '2023-12-31 23:59:59'`;
 
     // SQL to geoJson
     const geoJson = {

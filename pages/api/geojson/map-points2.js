@@ -25,21 +25,21 @@ export default async function handler(req, res) {
             property."OWNER"
         HAVING
             COUNT(bpv."sam_id") > 5
-    )
-    SELECT
-        bpv."latitude",
-        bpv."longitude",
-        bpv."sam_id"
-    FROM
-        sam
-    JOIN
-        property ON sam."PARCEL" = property."PID"
-    JOIN
-        bpv ON sam."SAM_ADDRESS_ID" = bpv."sam_id"
-    WHERE
-        property."OWNER" IN (SELECT "OWNER" FROM OwnersWithViolations)
-    group by
-        bpv."latitude", bpv."longitude", bpv."sam_id";`;
+      )
+      SELECT
+          bpv."latitude",
+          bpv."longitude",
+          bpv."sam_id"
+      FROM
+          sam
+      JOIN
+          property ON sam."PARCEL" = property."PID"
+      JOIN
+          bpv ON sam."SAM_ADDRESS_ID" = bpv."sam_id"
+      WHERE
+          property."OWNER" IN (SELECT "OWNER" FROM OwnersWithViolations)
+      group by
+          bpv."latitude", bpv."longitude", bpv."sam_id";`;
 
     // SQL to geoJson
     const geoJson = {

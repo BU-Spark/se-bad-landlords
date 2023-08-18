@@ -20,6 +20,7 @@ export default async function handler(req, res) {
             FULL_ADDRESS: true,
             MAILING_NEIGHBORHOOD: true,
             ZIP_CODE: true,
+            PARCEL: true
         },
     });
   
@@ -35,10 +36,20 @@ export default async function handler(req, res) {
             OWNER: true
         }
     });
-  
+
+    if (!propertyData) {
+        return res.status(404).json({ error: 'Property record not found.' });
+    }
+    
+    // use this to restrict code that makes landlord ScoffLaw
+    // const codesRestiction = ['code1', 'code2'];
+
     const bpvData = await prisma.bpv.findFirst({
         where: {
             sam_id: sam_id,
+            // code: {
+            //     in: codesRestiction
+            // },
         },
         select: {
             status: true,
@@ -46,6 +57,10 @@ export default async function handler(req, res) {
             description: true
         }
     });
+
+    if (!bpvData) {
+        return res.status(404).json({ error: 'BPV record not found.' });
+    }
 
     const combinedData = {
         ...samData,
