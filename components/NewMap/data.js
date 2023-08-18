@@ -58,7 +58,9 @@ export const neighborhoodsBordersLayer = {
 // violations data and layers
 export const violationsData = {
   type: 'geojson',
+  // change this url to api or static geojson file
   url: 'https://kolade2.github.io/Bad-Landlords/data/updated_data.csv.geojson'
+  // url: 'http://localhost:3000/api/geojson/map-points2'
 }
 
 export const unclusteredViolationsLayer = {

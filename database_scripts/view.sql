@@ -41,6 +41,7 @@ join parcel parcel on sam."PARCEL" = parcel."MAP_PAR_ID"
 join bpv bpv on sam."SAM_ADDRESS_ID" = bpv."sam_id"
 where cast(property."year" as integer) = 2023
 group by property."OWNER"
+-- HAVING COUNT(bpv."sam_id") > 6 --add this part to only display more than 6 violations for owners
 order by violations_count desc
 limit 10;
 SELECT * FROM violations_view;
@@ -60,3 +61,61 @@ group by sam."SAM_ADDRESS_ID", property."OWNER"
 order by violations_count desc
 limit 10;
 SELECT * FROM violations_view_sam_id;
+
+-- groups by sam_id and displays the properties with 6 or more violations in 2022
+SELECT
+    sub."latitude",
+    sub."longitude",
+    sub."sam_id",
+    sub.violation_count
+FROM
+    (SELECT
+        bpv."latitude",
+        bpv."longitude",
+        bpv."sam_id",
+        COUNT(bpv."sam_id") AS violation_count
+    FROM
+        bpv
+    WHERE
+        bpv."status_dttm" BETWEEN '2022-01-01 00:00:00' AND '2023-12-31 23:59:59'
+    GROUP BY
+        bpv."latitude", bpv."longitude", bpv."sam_id"
+    ) AS sub
+WHERE
+    sub.violation_count > 5
+ORDER BY
+    sub.violation_count DESC;
+
+-- gets owners with 6 or more violations, then returns all of these owner's properties
+WITH OwnersWithViolations AS (
+    SELECT
+        property."OWNER"
+    FROM
+        sam
+    JOIN
+        property ON sam."PARCEL" = property."PID"
+    JOIN
+        parcel ON sam."PARCEL" = parcel."MAP_PAR_ID"
+    JOIN
+        bpv ON sam."SAM_ADDRESS_ID" = bpv."sam_id"
+    WHERE
+        CAST(property."year" AS integer) = 2023
+    GROUP BY
+        property."OWNER"
+    HAVING
+        COUNT(bpv."sam_id") > 5
+)
+SELECT
+    bpv."latitude",
+    bpv."longitude",
+    bpv."sam_id"
+FROM
+    sam
+JOIN
+    property ON sam."PARCEL" = property."PID"
+JOIN
+	bpv ON sam."SAM_ADDRESS_ID" = bpv."sam_id"
+WHERE
+    property."OWNER" IN (SELECT "OWNER" FROM OwnersWithViolations)
+group by
+	bpv."latitude", bpv."longitude", bpv."sam_id";
