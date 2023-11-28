@@ -1,6 +1,7 @@
 import Map, { Source, Layer } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { blockLayer, 
+import {
+  blockLayer, 
   neighborhoodsLayer, 
   neighborhoodsBordersLayer,
   unclusteredViolationsLayer,
@@ -9,7 +10,7 @@ import { blockLayer,
   neighborhoodsData,
   censusData,
   violationsData,
- } 
+}
 from './data';
 
 const NewMap = () => {
@@ -51,7 +52,7 @@ const NewMap = () => {
         initialViewState={{
           longitude: -71.0589,
           latitude: 42.3601,
-          zoom: 12
+          zoom: 11.5
         }}
         style={{
           width: '100%',
