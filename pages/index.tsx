@@ -36,7 +36,7 @@ const Home = () => {
 
   return (
     <>
-        <div>
+        <div className="w-9/10 mx-auto">
             <NewMap />
             {/*below are the code example using api*/}
             {/*this shows the full address using search box*/}

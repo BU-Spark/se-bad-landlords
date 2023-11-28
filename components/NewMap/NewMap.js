@@ -12,8 +12,20 @@ import {
   violationsData,
 }
 from './data';
+import React, { useState, useEffect } from 'react';
 
 const NewMap = () => {
+  // sets the map size depending on the height
+  const [mapHeight, setMapHeight] = useState(null);
+  useEffect(() => {
+    setMapHeight(window.innerHeight * 0.7);
+    const handleResize = () => {
+      setMapHeight(window.innerHeight * 0.7);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleMapClick = async (event) => {
     const clickedFeatures = event.target.queryRenderedFeatures(event.point);
     if (clickedFeatures && clickedFeatures.length > 0 && clickedFeatures[0].source === 'violations') {
@@ -56,8 +68,7 @@ const NewMap = () => {
         }}
         style={{
           width: '100%',
-          height: 620,
-          top: 30
+          height: mapHeight
         }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken="pk.eyJ1Ijoic3BhcmstYmFkbGFuZGxvcmRzIiwiYSI6ImNsaWpsMXc3ZTA4MGszZXFvaDBrc3I0Z3AifQ.mMM7raXYPneJfzyOoflFfQ"
