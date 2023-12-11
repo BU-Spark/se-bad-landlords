@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -15,13 +17,12 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
+html{
+  width: 100%;
+}
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #F2F2F2;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.05em;
 }
