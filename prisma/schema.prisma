@@ -1,0 +1,61 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bpv {
+  code        String
+  longitude   String?
+  sam_id      String?
+  status_dttm String?
+  latitude    String?
+  status      String?
+  description String?
+  case_no     String
+
+  @@id([case_no, code], map: "pk_case_no_code")
+}
+
+model parcel {
+  MAP_PAR_ID       String  @id
+  LOC_ID           String?
+  Shape_STArea__   String?
+  Shape_STLength__ String?
+  Shape_Length     String?
+  Shape_Area       String?
+}
+
+model property {
+  year     String
+  PID      String
+  ST_NUM   String?
+  ST_NAME  String?
+  UNIT_NUM String?
+  CITY     String?
+  ZIP_CODE String?
+  OWNER    String?
+
+  @@id([PID, year], map: "pk_pid_year")
+}
+
+model sam {
+  SAM_ADDRESS_ID       String  @id
+  FULL_ADDRESS         String?
+  MAILING_NEIGHBORHOOD String?
+  ZIP_CODE             String?
+  X_COORD              String?
+  Y_COORD              String?
+  PARCEL               String?
+}
+
+view violations_view {
+  OWNER            String  @unique
+  FULL_ADDRESS     String  @unique
+  CITY             String  @unique
+  violations_count Int?
+}

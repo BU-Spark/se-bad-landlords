@@ -37,3 +37,9 @@ yarn-error.log*
 
 #mts-data-sync
 /mts-data-sync
+
+pnpm-lock.yaml
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

@@ -1,0 +1,8 @@
+map-points:
+    this shows all properties with 1 or more violations in 2023.
+
+map-points1:
+    this shows ScoffLaw(6 or more violation occurred properties) of past 12 months from current date.
+
+map-points2:
+    show all properties that has a owner with 6 or more violations.
