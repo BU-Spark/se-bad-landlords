@@ -14,7 +14,13 @@ import {
 from './data';
 import React, { useState, useEffect } from 'react';
 
-const NewMap = () => {
+const NewMap = ({ selectedCoords, isCoordsSet }) => {
+  const [viewport, setViewport] = useState({
+    // initial state of viewport
+    longitude: -71.0589,
+    latitude: 42.3601,
+    zoom: 11.5
+  });
   // sets the map size depending on the height
   const [mapHeight, setMapHeight] = useState(null);
   useEffect(() => {
@@ -41,6 +47,17 @@ const NewMap = () => {
     }
   }
 
+  useEffect(() => {
+    if (selectedCoords.latitude && selectedCoords.longitude && isCoordsSet) {
+      setViewport({
+        ...viewport,
+        latitude: selectedCoords.latitude,
+        longitude: selectedCoords.longitude,
+        zoom: 17 // zoom level for when user searches
+      });
+    }
+  }, [selectedCoords, isCoordsSet]);
+
   const fetchPropertyDetails = async (samId) => {
     try {
       const response = await fetch(`/api/property/details?sam_id=${samId}`);
@@ -61,11 +78,8 @@ const NewMap = () => {
   return(
     <>
       <Map
-        initialViewState={{
-          longitude: -71.0589,
-          latitude: 42.3601,
-          zoom: 11.5
-        }}
+        {...viewport}
+        onMove={evt => setViewport(evt.viewport)}
         style={{
           width: '100%',
           height: mapHeight
