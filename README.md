@@ -1,90 +1,107 @@
-# Next + Netlify Starter
+# BadLandLords
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/46648482-644c-4c80-bafb-872057e51b6b/deploy-status)](https://app.netlify.com/sites/next-dev-starter/deploys)
+## Status notes from PR
 
-This is a [Next.js](https://nextjs.org/) v12 project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) and set up to be instantly deployed to [Netlify](https://url.netlify.com/SyTBPVamO)!
+Refactored project to TypeScript with the new UI design.
 
-This project is a very minimal starter that includes 2 sample components, a global stylesheet, a `netlify.toml` for deployment, and a `jsconfig.json` for setting up absolute imports and aliases. With Netlify, you'll have access to features like Preview Mode, server-side rendering/incremental static regeneration via Netlify Functions, and internationalized routing on deploy automatically.
+Next, we need to try hosting this project. We'll have to set up some env values in GitHub and deploy to Netlify. We will need at least DATABASE_URL and SITE_URL. SITE_URL is just the Netlify URL.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify-templates/next-netlify-starter&utm_source=github&utm_medium=nextstarter-cs&utm_campaign=devex-cs)
+Everything displayed on the site is working. I've added a feature using the OpenStreetMap API to get latitude and longitude, which helps to zoom into the map. Users will search for an address from the Live Street Address Management (SAM) dataset. Initially, I tried using the Building and Property Violations (BPV) dataset to get latitude and longitude. However, the issue is that SAM allows you to look for properties with no violations, whereas BPV doesn't have those data.
 
-(If you click this button, it will create a new repo for you that looks exactly like this one, and sets that repo up immediately for deployment on Netlify)
+https://docs.mapbox.com/mapbox-gl-js/example/popup-on-click/
+I also attempted to implement the modal popup when points are clicked, using something similar from the URL above. Another feature I wanted to add was making the circles larger. However, I couldn't figure out how to make these two features work.
 
-## Table of Contents:
 
-- [Getting Started](#getting-started)
-- [Installation options](#installation-options)
-- [Testing](#testing)
-  - [Included Default Testing](#included-default-testing)
-  - [Removing Renovate](#removing-renovate)
-  - [Removing Cypress](#removing-cypress)
+## Project Description
+BadLandLords aims to increase the transparency of the Boston planning, zoning, and development process for its residents. This system will allow for tracking of property violations and provide a criterion for designating a property owner as a "scofflaw property owner" based on several factors.
 
-## Getting Started
+Councilor Breadon’s office is keen on providing constituents with insights into the city's evolving landscape and identifying landlords that may not be compliant with property regulations. 
 
-First, run the development server:
+### Goals
+- Establish criteria to identify "bad landlords" or "scofflaw property owners".
+- Propose amendments to the City of Boston Code of Ordinances.
+  
+### Criteria for Scofflaw Property Owner
+1. One or more rental units in active enforcement proceedings.
+2. Ownership of rental units with six or more code violations within a 12-month period.
+3. Ownership of a rental unit designated as a “problem property”.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Project Requirements
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Data Engineering
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- **Automate Data Extraction**: Extract and merge datasets including Problem Properties List, Property Assessment, Live Street Address Management (SAM), and Building and Property Violations.
+  
+- **Integrate Court Data**: Consider data sources like Civera (from Masscourts.org) or other potential sources.
+  
+- **Data Linking**: Identify fields that act as keys to link different datasets with assistance from domain experts.
+  
+- **Implement Caching Strategy**: Ensure that the data pipeline is efficient and responsive.
+  
+- **Data Filtering**: Determine the columns and data points to be pulled into the web application.
 
-### Installation options
+### UX/UI Needs
 
-**Option one:** One-click deploy
+- **Research**: Review existing bad landlord sites for inspiration such as NY Worst Landlords, Chicago Scofflaw site, and Toronto Rent Safe List.
+  
+- **Client Consultation**: Engage with the client to determine the priority data points to display.
+  
+- **Branding and Design**: Create a unique brand and visual style for the platform.
+  
+- **User Research**: Use UX Toolkit to draft interview scripts and gather user insights.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify-templates/next-netlify-starter&utm_source=github&utm_medium=nextstarter-cs&utm_campaign=devex-cs)
+### Deliverables
 
-**Option two:** Manual clone
+- **Interactive Web App**: Develop an interface that allows users to interact with the data.
+  
+- **Map Features**: Update the map to allow selection by neighborhood, census tracts, and other geographic divisions.
+  
+- **Data Display**: Provide displays for scofflaw landlord lists based on the map and filters.
+  
+- **Additional Datasets (Optional)**: Integrate datasets such as Census Block Groups or College Student Addresses for enhanced insights.
 
-1. Clone this repo: `git clone https://github.com/netlify-templates/next-netlify-starter.git`
-2. Navigate to the directory and run `npm install`
-3. Run `npm run dev`
-4. Make your changes
-5. Connect to [Netlify](https://url.netlify.com/Bk4UicocL) manually (the `netlify.toml` file is the one you'll need to make sure stays intact to make sure the export is done and pointed to the right stuff)
+## Status (Inprogress)
 
-## Testing
+### Data Engineering
 
-### Included Default Testing
+- **Automate Data Extraction**: Not fully complete. While scripts are in place, automation for running these scripts needs to be set up.
+- **Court Data**: Currently not being used.
 
-We’ve included some tooling that helps us maintain these templates. This template currently uses:
+### UX/UI Needs
 
-- [Renovate](https://www.mend.io/free-developer-tools/renovate/) - to regularly update our dependencies
-- [Cypress](https://www.cypress.io/) - to run tests against how the template runs in the browser
-- [Cypress Netlify Build Plugin](https://github.com/cypress-io/netlify-plugin-cypress) - to run our tests during our build process
+- **Design and User Experience**: UX has been designed and is available at [Figma](https://www.figma.com/file/YyGxcuBnocytIijXjS5COZ/Fall-2023---Bad-Landlords?node-id=960%3A322&mode=dev). Design is still in progress as of 12/20/2023.
 
-If your team is not interested in this tooling, you can remove them with ease!
+### Deliverables
 
-### Removing Renovate
+- **Data Representation**: More datasets need to be incorporated for accurate ScoffLaw determination.
+- **UI**: Ongoing changes to align with the UX design.
 
-In order to keep our project up-to-date with dependencies we use a tool called [Renovate](https://github.com/marketplace/renovate). If you’re not interested in this tooling, delete the `renovate.json` file and commit that onto your main branch.
+## Architecture
 
-### Removing Cypress
+- **Framework**: The application uses Next.js for front/backend and use Tailwind CSS for styling.
+- **Map Features**: Mapbox is employed for map functionalities.
+- **Hosting & CI/CD**: Netlify is used for hosting and CI/CD.
 
-For our testing, we use [Cypress](https://www.cypress.io/) for end-to-end testing. This makes sure that we can validate that our templates are rendering and displaying as we’d expect. By default, we have Cypress not generate deploy links if our tests don’t pass. If you’d like to keep Cypress and still generate the deploy links, go into your `netlify.toml` and delete the plugin configuration lines:
+### Directory Structure
 
-```diff
-[[plugins]]
-  package = "netlify-plugin-cypress"
--  [plugins.inputs.postBuild]
--    enable = true
--
--  [plugins.inputs]
--    enable = false 
-```
+- `/database_scripts`: Contains Python scripts for datasets like Building and Violations, Parcel2023, Property Assessment, and SAM Addresses. Dataset links:
+    - [Building and Violations](https://data.boston.gov/dataset/building-and-property-violations1)
+    - [Parcel2023](https://data.boston.gov/dataset/parcels-2023)
+    - [Property Assessment](https://data.boston.gov/dataset/property-assessment)
+    - [SAM Addresses](https://data.boston.gov/dataset/live-street-address-management-sam-addresses)
+  
+- `/components`: Contains reusable components used in the website. The `/NewMap` directory here contains Mapbox interactive map implementation files.
+  
+- `/prisma`: Contains the current database schema. It's important to note that the models aren't connected using foreign keys in the PostgreSQL database (hosted on Railway).
+  
+- `/pages`: Contains frontend code.
+  
+- `/pages/api`: Holds the API endpoints developed over the project duration.
+  
+- `/styles`: Contains global CSS with Tailwind CSS.
 
-If you’d like to remove the `netlify-plugin-cypress` build plugin entirely, you’d need to delete the entire block above instead. And then make sure sure to remove the package from the dependencies using:
+## Known Bugs/Issues
 
-```bash
-npm uninstall -D netlify-plugin-cypress
-```
-
-And lastly if you’d like to remove Cypress entirely, delete the entire `cypress` folder and the `cypress.config.ts` file. Then remove the dependency using:
-
-```bash
-npm uninstall -S cypress
-```
+- **Data Limitations**: The current datasets might be insufficient for the desired functionalities of the app. While the app displays data points with six or more violations, the data from Building and Violations is not clean and needs client consultation.
+  
+- **Dataset Incompleteness**: If planning to display all households in Boston on the map, a more comprehensive dataset than SAM might be necessary as some data points could be missing.
