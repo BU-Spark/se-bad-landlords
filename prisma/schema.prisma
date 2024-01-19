@@ -23,6 +23,7 @@ model bpv {
 
 model parcel {
   MAP_PAR_ID       String  @id
+  LOC_ID           String?
   Shape_STArea__   String?
   Shape_STLength__ String?
   Shape_Length     String?
@@ -54,5 +55,7 @@ model sam {
 
 view violations_view {
   OWNER            String  @unique
+  FULL_ADDRESS     String  @unique
+  CITY             String  @unique
   violations_count Int?
 }

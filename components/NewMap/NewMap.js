@@ -1,6 +1,7 @@
 import Map, { Source, Layer } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { blockLayer, 
+import {
+  blockLayer, 
   neighborhoodsLayer, 
   neighborhoodsBordersLayer,
   unclusteredViolationsLayer,
@@ -9,10 +10,28 @@ import { blockLayer,
   neighborhoodsData,
   censusData,
   violationsData,
- } 
+}
 from './data';
+import React, { useState, useEffect } from 'react';
 
-const NewMap = () => {
+const NewMap = ({ selectedCoords, isCoordsSet }) => {
+  const [viewport, setViewport] = useState({
+    // initial state of viewport
+    longitude: -71.0589,
+    latitude: 42.3601,
+    zoom: 11.5
+  });
+  // sets the map size depending on the height
+  const [mapHeight, setMapHeight] = useState(null);
+  useEffect(() => {
+    setMapHeight(window.innerHeight * 0.7);
+    const handleResize = () => {
+      setMapHeight(window.innerHeight * 0.7);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleMapClick = async (event) => {
     const clickedFeatures = event.target.queryRenderedFeatures(event.point);
     if (clickedFeatures && clickedFeatures.length > 0 && clickedFeatures[0].source === 'violations') {
@@ -27,6 +46,17 @@ const NewMap = () => {
       }
     }
   }
+
+  useEffect(() => {
+    if (selectedCoords.latitude && selectedCoords.longitude && isCoordsSet) {
+      setViewport({
+        ...viewport,
+        latitude: selectedCoords.latitude,
+        longitude: selectedCoords.longitude,
+        zoom: 17 // zoom level for when user searches
+      });
+    }
+  }, [selectedCoords, isCoordsSet]);
 
   const fetchPropertyDetails = async (samId) => {
     try {
@@ -48,15 +78,11 @@ const NewMap = () => {
   return(
     <>
       <Map
-        initialViewState={{
-          longitude: -71.0589,
-          latitude: 42.3601,
-          zoom: 12
-        }}
+        {...viewport}
+        onMove={evt => setViewport(evt.viewport)}
         style={{
           width: '100%',
-          height: 620,
-          top: 30
+          height: mapHeight
         }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken="pk.eyJ1Ijoic3BhcmstYmFkbGFuZGxvcmRzIiwiYSI6ImNsaWpsMXc3ZTA4MGszZXFvaDBrc3I0Z3AifQ.mMM7raXYPneJfzyOoflFfQ"

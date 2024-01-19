@@ -1,9 +1,10 @@
-// block data and layers
 export const censusData = {
   type: 'vector',
   url: 'mapbox://spark-badlandlords.cxyyru86'
 }
 
+// block data and layers
+// fills each neighborhoods
 export const blockLayer = {
   id: 'census-block-layer',
   type: 'fill',
@@ -15,17 +16,16 @@ export const blockLayer = {
   paint: {
     'fill-color': 'blue',
     'fill-outline-color': 'red',
-    'fill-opacity': 0.3
+    'fill-opacity': 0
   }
 }
 
 // neighborhoods data and layers
-
+// out lines the neighborhoods by changing color values of paint
 export const neighborhoodsData = {
   type: 'vector',
   url: 'mapbox://spark-badlandlords.8o9j3v7f'
 }
-
 export const neighborhoodsLayer = {
   id: 'neighborhoods-fills',
   type: 'fill',
@@ -42,7 +42,6 @@ export const neighborhoodsLayer = {
     ]
   }
 }
-
 export const neighborhoodsBordersLayer = {
   id: 'neighborhoods-borders',
   type: 'line',
@@ -50,19 +49,19 @@ export const neighborhoodsBordersLayer = {
   'source-layer': 'census2020_bg_neighborhoods-5hyj9i',
   layout: {},
   paint: {
-    'line-color': 'purple',
-    'line-width': 2
+    'line-color': 'blue',
+    'line-width': 0
   },
 }
 
 // violations data and layers
+// change the url to one of map-point api to fetch data points
 export const violationsData = {
   type: 'geojson',
-  // change this url to api or static geojson file
-  url: 'https://kolade2.github.io/Bad-Landlords/data/updated_data.csv.geojson'
-  // url: 'http://localhost:3000/api/geojson/map-points2'
+  url: '/api/geojson/map-points2'
 }
 
+// small dots indicating individual points of the map styles
 export const unclusteredViolationsLayer = {
   id: 'unclustered-violations',
   type: 'circle',
@@ -72,24 +71,26 @@ export const unclusteredViolationsLayer = {
     ['has', 'point_count']
   ],
   paint: {
-    'circle-color': 'white',
-    'circle-radius': 4,
-    'circle-stroke-width': 1.5,
-    'circle-stroke-color': 'purple'
+    'circle-color': '#FB4D42',
+    'circle-radius': 6,
+    // 'circle-stroke-width': 1.5,
+    'circle-stroke-color': '#FB4D42'
   }
 }
 
+// clustered circles styles
 export const clusteredViolationsLayer = {
   id: 'clustered-violations',
   type: 'circle',
   source: 'violationsData',
   filter: ['has', 'point_count'],
   paint: {
-    'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-    'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+    'circle-color': ['step', ['get', 'point_count'], '#F9E1AC', 100, '#F09DB1', 750, '#7CE4C9'],
+    'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+    'circle-stroke-width': 2,
+    'circle-stroke-color': ['step', ['get', 'point_count'], '#FFD166', 100, '#EF476F', 750, '#06D6A0']
   }
 }
-
 export const clusterViolationsCountLayer = {
   id: 'cluster-violations-count',
   type: 'symbol',
@@ -97,7 +98,7 @@ export const clusterViolationsCountLayer = {
   filter: ['has', 'point_count'],
   layout: {
     'text-field': '{point_count_abbreviated}',
-    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-    'text-size': 12
+    'text-font': ['Montserrat Bold', 'Arial Unicode MS Bold'],
+    'text-size': 13
   }
 }
