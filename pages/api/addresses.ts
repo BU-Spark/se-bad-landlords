@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const searchAddress = req.query.search;
+    const searchAddress = req.query.search as string;
 
     const addresses = await prisma.sam.findMany({
       where: {

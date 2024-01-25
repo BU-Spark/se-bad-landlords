@@ -8,7 +8,7 @@ export default function Footer() {
 
             {/* content */}
             <div className="hidden md:flex items-center pl-9 pr-28 flex-[0_0_60%]">
-                Councilor Breadon's mission to increase accessibility and transparency in the Boston planning 
+                Councilor Breadon&apos;s mission to increase accessibility and transparency in the Boston planning 
                 and development process aligns with our goals of promoting accountability and responsibility 
                 among property owners and landlords. Through our website, you can access up-to-date information 
                 on property violations, learn about your rights as a tenant, 
