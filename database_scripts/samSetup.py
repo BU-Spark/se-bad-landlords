@@ -21,8 +21,7 @@ def download_csv():
     soup = BeautifulSoup(response.text, 'html.parser')
     resource_list = soup.find('ul', class_='resource-list')
     # this is the second download button for csv file
-    csv_url = resource_list.find_all('li', class_='resource-item')[1].find('div', class_='btn-group').find_all('a')[1]['href']
-    
+    csv_url = "https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::live-street-address-management-sam-addresses.csv?where=1=1&outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D"    
     # download the csv file in chunks because it can be large
     # we use wb to overwrite old sam.csv
     with requests.get(csv_url, stream=True) as r:
