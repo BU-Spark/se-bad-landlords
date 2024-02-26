@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const SAM_ADDRESS_ID = req.query.samId;
+    const SAM_ADDRESS_ID = req.query.samId as string;
     console.log(SAM_ADDRESS_ID)
     console.log(typeof(SAM_ADDRESS_ID))
     const propertyData = await prisma.bpv.findFirst({
