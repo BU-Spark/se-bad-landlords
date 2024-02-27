@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import NewMap from '@components/NewMap/NewMap';
+import { useRouter } from 'next/router';
 
 interface ILandlord {
     OWNER: string;
@@ -25,6 +26,9 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
     const [addressSuggestions, setAddressSuggestions] = useState<IAddress[]>([]);
     const [selectedCoords, setSelectedCoords] = useState({ latitude: -71.0589, longitude: 42.3601 });
     const [isCoordsSet, setIsCoordsSet] = useState(false);
+    const [selectedAddress, setSelectedAddress] = useState<IAddress>();
+
+    const router = useRouter();
 
     // call /api/searchAddress with address parameter as input
     const fetchAddressSuggestions = async (searchAddress: string) => {
@@ -50,6 +54,10 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
     };
     
     const handleAddressSelection = async (address: IAddress) => {
+        setSelectedAddress(address);
+        const addressString = JSON.stringify(address);
+        const encodedAddress = encodeURIComponent(addressString);
+        router.push(`/map/detail?address=${encodeURIComponent(encodedAddress)}`);
         try {
             setIsCoordsSet(true);
             /**
