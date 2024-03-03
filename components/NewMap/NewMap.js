@@ -15,6 +15,8 @@ from './data';
 import React, { useState, useEffect } from 'react';
 
 const NewMap = ({ selectedCoords, isCoordsSet }) => {
+  const [searchAddress, setSearchAddress] = useState('');
+
   const [viewport, setViewport] = useState({
     // initial state of viewport
     longitude: -71.0589,
@@ -77,6 +79,19 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
 
   return(
     <>
+      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }} >
+        {/* <div className="flex items-center"> */}
+        <img src="/search-icon.svg" alt="saerch-icon" className="inline mx-2" />
+        <input
+          type="text"
+          value={searchAddress}
+          onChange={(e) => setSearchAddress(e.target.value)} 
+          placeholder="Search for an address"
+          className="w-full py-2 px-1 rounded focus:outline-none placeholder:text-[#58585B]"
+          onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
+        />
+        {/* </div> */}
+      </div>
       <Map
         {...viewport}
         onMove={evt => setViewport(evt.viewport)}
