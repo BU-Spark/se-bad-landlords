@@ -14,7 +14,9 @@ import {
 from './data';
 import React, { useState, useEffect } from 'react';
 
+
 const NewMap = ({ selectedCoords, isCoordsSet }) => {
+  const neighborhoodNameList = ["Back Bay", "Fenway-Kenmore", "Allston", "Beacon Hill", "Brighton", "Bay Village", "Charlestown", "South End"]
   const [viewport, setViewport] = useState({
     // initial state of viewport
     longitude: -71.0589,
@@ -23,6 +25,16 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
   });
   // sets the map size depending on the height
   const [mapHeight, setMapHeight] = useState(null);
+  // // sets the neighborhood data. Names and centers
+  // const [neighborhoods, setNeighborhoods] = useState(neighborhoodNameList.map(neighborhoodName => 
+  //   Object({
+  //     name: neighborhoodName,
+  //     longitude: 10.0,
+  //     latitude: 20.0,
+  //     zoom: 15
+  //   })
+  // ));
+  
   useEffect(() => {
     setMapHeight(window.innerHeight * 0.7);
     const handleResize = () => {
@@ -31,6 +43,31 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // useEffect(() => {
+  //   const promises = neighborhoodNameList.map(neighborhoodName => {
+  //     fetchNeiborhoodAddress(neighborhoodName)
+  //   })
+  //   Promise.all(promises)
+  //     .then(results => {
+  //       // results[index]: RowData[]
+  //       // type RowData = {
+  //       //   SAM_ADDRESS_ID: string,
+  //       //   X_COORD: string | null,
+  //       //   Y_COORD: string | null
+  //       // }
+  //       const neighborhoods = results.map((result, index) => Object({
+  //         name: neighborhoodNameList[index],
+  //         latitude: result.X_Coord,
+  //         longitude: result.Y_Coord
+  //       }))
+  //       setNeighborhoods(neighborhoods);
+  //     })
+  //     .catch(error => {
+  //       console.error("Error fetching data:", error);
+  //     });
+  //       // const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fullAddress}`);
+  // }, [])
 
   const handleMapClick = async (event) => {
     const clickedFeatures = event.target.queryRenderedFeatures(event.point);
@@ -75,8 +112,22 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
     }
   };
 
+
+  // async function fetchNeiborhoodAddress(neighborhoodName) {
+  //   try {
+  //     const res = await fetch(`/api/geojson/map-points3?neighborhoodName=${neighborhoodName}`);
+  //     if (res.ok) {
+  //       const geoJson = await res.json();
+  //       return geoJson
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   };
+  // }
+
   return(
     <>
+    <div className="relative">
       <Map
         {...viewport}
         onMove={evt => setViewport(evt.viewport)}
@@ -108,8 +159,39 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
           <Layer {...unclusteredViolationsLayer} />
         </Source>
       </Map>
+
+      {/* The search bar */}
+      <div className="absolute top-5 left-5 z-10 bg-white p-4 rounded-lg shadow-md">
+        THE_SEARCH_BAR
+      </div>
+
+      {/* The neighborhood buttons */}
+      <div className="absolute top-5 right-5 z-10 bg-white p-4 rounded-lg shadow-md">
+        <p className="mb-2 py-2 px-4 text-center font-bold font-montserrat text-xl">
+          NEIGHBORHOODS
+        </p>
+        {neighborhoodNameList.map((neighborhood, index) => (
+          <div key={index}>
+            <button
+              key={neighborhood} // Add a unique key prop
+              onClick={() => alert(`Button ${neighborhood} clicked!`)}
+              className="mb-2 py-2 px-4 bg-blue-500 text-white font-lora rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+            >
+              {neighborhood} {/* Display the neighborhood name */}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
     </>
   )
 }
 
 export default NewMap;
+/* Rectangle 494 */
+
+/* NEIGHBORHOODS */
+
+
+
+

@@ -189,7 +189,7 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
 
                     </div>
                     {addressSuggestions.length > 0 && (
-                        <ul ref={suggestionsRef} className="absolute mt-1 w-5/6 bg-white border border-gray-300 z-10">
+                        <ul ref={suggestionsRef} className="z-20 absolute mt-1 w-5/6 bg-white border border-gray-300 z-10">
                             {addressSuggestions.map((address, index) => (
                                 <li 
                                     key={index} 
