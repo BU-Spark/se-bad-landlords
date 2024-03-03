@@ -35,6 +35,7 @@ function debounce(func, wait) {
 }
 
 
+
 const NewMap = ({ selectedCoords, isCoordsSet }) => {
   const router = useRouter();
 
@@ -52,6 +53,7 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
   });
   // sets the map size depending on the height
   const [mapHeight, setMapHeight] = useState(null);
+  
   useEffect(() => {
     setMapHeight(window.innerHeight * 0.7);
     const handleResize = () => {
@@ -190,9 +192,12 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
 
   return(
     <>
+    <div className="relative">
       <Map
         {...viewport}
-        onMove={evt => setViewport(evt.viewport)}
+        onMove={
+          evt => {setViewport(evt.viewState)}
+        }
         style={{
           width: '100%',
           height: mapHeight
@@ -256,8 +261,85 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
           <Layer {...unclusteredViolationsLayer} />
         </Source>
       </Map>
+
+      {/* The neighborhood buttons */}
+      <div className="absolute top-5 right-5 z-10 bg-white p-4 rounded-lg shadow-md">
+        <p className="mb-2 py-2 px-4 text-center font-bold font-montserrat text-xl">
+          NEIGHBORHOODS
+        </p>
+        {neighborhoods.map((neighborhood, index) => (
+          <div key={index}>
+            <button
+              key={index} // Add a unique key prop
+              onClick={() => {
+                // alert(`Button ${neighborhood.name} clicked!`);
+                const { name, ...vp } = neighborhood
+                setViewport(vp)
+              }}
+              className="mb-2 py-2 px-4 bg-blue-500 text-white font-lora rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+            >
+              {neighborhood.name} {/* Display the neighborhood name */}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
     </>
   )
 }
 
+const neighborhoods = [
+  {
+    name: "Back Bay",
+    latitude: 42.34935079219511,
+    longitude: -71.07768484195698,
+    zoom: 14.5
+  },
+  {
+    name: "Fenway-Kenmore",
+    latitude: 42.34410046840793,
+    longitude: -71.09149456439195,
+    zoom: 14.5
+  },
+  {
+    name: "Allston",
+    latitude: 42.354073887542484,
+    longitude: -71.12205552803877,
+    zoom: 14.5
+  },
+  {
+    name: "Beacon Hill",
+    latitude: 42.35772707692351,
+    longitude: -71.06063056114242,
+    zoom: 14.5
+  },
+  {
+    name: "Brighton",
+    latitude: 42.349807928693366,
+    longitude: -71.15428721858567,
+    zoom: 14
+  },
+  {
+    name: "Bay Village",
+    latitude: 42.34867038592486,
+    longitude: -71.0656615496278,
+    zoom: 15
+  },
+  {
+    name: "Charlestown",
+    latitude: 42.37803429987562,
+    longitude: -71.06114769366161,
+    zoom: 14.5
+  },
+  {
+    name: "South End",
+    latitude: 42.340878919021804,
+    longitude: -71.07653159645594,
+    zoom: 14.5
+  },
+]
+
 export default NewMap;
+
+
+
