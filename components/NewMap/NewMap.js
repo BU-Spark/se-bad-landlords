@@ -1,4 +1,6 @@
 import Map, { Source, Layer } from 'react-map-gl';
+import { useRouter } from 'next/router';
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   blockLayer, 
@@ -12,10 +14,35 @@ import {
   violationsData,
 }
 from './data';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
+// debounce function, ensure api requests are not made too frequently
+function debounce(func, wait) {
+  let timeout = null;
+
+  return (...args) => {
+      const later = () => {
+          timeout = null;
+          func(...args);
+      };
+
+      if (timeout) {
+          clearTimeout(timeout);
+      }
+
+      timeout = setTimeout(later, wait);
+  };
+}
+
 
 const NewMap = ({ selectedCoords, isCoordsSet }) => {
+  const router = useRouter();
+
   const [searchAddress, setSearchAddress] = useState('');
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState();
+  const inputRef = useRef(null); // reference for searchbox
+  const suggestionsRef = useRef(null); // reference for suggestions
 
   const [viewport, setViewport] = useState({
     // initial state of viewport
@@ -34,6 +61,90 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const fetchAddressSuggestions = async (searchAddress) => {
+    try {
+        const res = await fetch(`/api/addresses?search=${searchAddress}`);
+        if (res.ok) {
+            const suggestions = await res.json();
+            setAddressSuggestions(suggestions);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+  };
+
+  const debouncedFetchAddressSuggestions = debounce((searchAddress) => {
+    fetchAddressSuggestions(searchAddress);
+  }, 300);
+
+  // handle search update
+  const handleSearchUpdate = (event) => {
+    const value = event.target.value;
+    setSearchAddress(value);
+    if (value.length > 2) {
+        debouncedFetchAddressSuggestions(value);
+    } else {
+        setAddressSuggestions([]);
+    }
+  };
+
+  // Onclick search button
+  // finds the address if input length is longer than 2
+  const handleSearchClick = async () => {
+    if (searchAddress.length > 2) {
+        await fetchAddressSuggestions(searchAddress);
+    } else {
+        setAddressSuggestions([]);
+    }
+  };
+
+  const handleAddressSelection = async (address) => {
+    setSelectedAddress(address);
+    const addressString = JSON.stringify(address);
+    const encodedAddress = encodeURIComponent(addressString);
+    router.push(`/map/detail?address=${encodeURIComponent(encodedAddress)}`);
+    try {
+        setIsCoordsSet(true);
+        /**
+         * Implementation of data fetch using samId in bpv dataset.
+         * This doesn't work because BPV datasets only have properties with violations.
+         * SAM dataset contains all street address.
+         * I am leaving this here as all you need to do is change bpv to something else over in the api file
+         * if new dataset is found.
+         */
+        // const response = await fetch(`/api/parcel?samId=${address.SAM_ADDRESS_ID}`);
+        // const data = await response.json();
+        /**
+         * Receive data and extract latitude and longtitude here if new dataset found.
+         */
+
+        // console.log('Clicked address:', address);
+        
+        /* This is OpenStreetMap Implementation
+           Issue with this was showing very wrong coords some property.
+           Probably due to having unit numbers.
+        */
+        const fullAddress = `${address.FULL_ADDRESS}, ${address.MAILING_NEIGHBORHOOD}, ${address.ZIP_CODE}`;
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fullAddress}`);
+        const data = await response.json();
+        
+        if (data.length > 0) {
+            const latitude = parseFloat(data[0].lat);
+            const longitude = parseFloat(data[0].lon);
+
+            if (!isNaN(latitude) && !isNaN(longitude)) {
+                setSelectedCoords({
+                    latitude: latitude,
+                    longitude: longitude
+                });
+            }
+        } else {
+            console.log('No Address!');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+  };
   const handleMapClick = async (event) => {
     const clickedFeatures = event.target.queryRenderedFeatures(event.point);
     if (clickedFeatures && clickedFeatures.length > 0 && clickedFeatures[0].source === 'violations') {
@@ -79,19 +190,6 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
 
   return(
     <>
-      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }} >
-        {/* <div className="flex items-center"> */}
-        <img src="/search-icon.svg" alt="saerch-icon" className="inline mx-2" />
-        <input
-          type="text"
-          value={searchAddress}
-          onChange={(e) => setSearchAddress(e.target.value)} 
-          placeholder="Search for an address"
-          className="w-full py-2 px-1 rounded focus:outline-none placeholder:text-[#58585B]"
-          onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
-        />
-        {/* </div> */}
-      </div>
       <Map
         {...viewport}
         onMove={evt => setViewport(evt.viewport)}
@@ -103,6 +201,41 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
         mapboxAccessToken="pk.eyJ1Ijoic3BhcmstYmFkbGFuZGxvcmRzIiwiYSI6ImNsaWpsMXc3ZTA4MGszZXFvaDBrc3I0Z3AifQ.mMM7raXYPneJfzyOoflFfQ"
         onClick={handleMapClick}
       >
+        <div style={{ position: 'relative', top: 30, left: 30}}>
+          <div className="h-9 bg-white w-1/4 rounded" >
+            <div className="flex items-center">
+              <img src="/search-icon.svg" alt="saerch-icon" className="inline mx-2" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchAddress}
+                onClick={handleSearchClick}
+                onChange={handleSearchUpdate}
+                placeholder="Search for an address"
+                className="w-full py-2 px-1 rounded focus:outline-none placeholder:text-[#58585B] "
+                onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
+              />
+            </div>
+            {addressSuggestions.length > 0 && (
+              <ul ref={suggestionsRef} className="absolute mt-1 w-1/4 bg-white border border-gray-300 z-10">
+                  {addressSuggestions.map((address, index) => (
+                      <li 
+                          key={index} 
+                          onClick={() => {
+                              setSearchAddress(`${address.FULL_ADDRESS}, ${address.MAILING_NEIGHBORHOOD}, ${address.ZIP_CODE}`);
+                              setAddressSuggestions([]);
+                              handleAddressSelection(address);
+                          }}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                          {address.FULL_ADDRESS}, {address.MAILING_NEIGHBORHOOD}, {address.ZIP_CODE}
+                      </li>
+                  ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
         <Source id="census" type="vector" url={censusData.url} >
           <Layer {...blockLayer} />
         </Source>
