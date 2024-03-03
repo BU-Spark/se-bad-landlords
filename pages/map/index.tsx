@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import NewMap from '@components/NewMap/NewMap';
-import { useRouter } from 'next/router';
 
 interface ILandlord {
     OWNER: string;
@@ -21,36 +20,11 @@ interface IAddress {
     ZIP_CODE: string;
 }
 
-// debounce function, ensure api requests are not made too frequently
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout | null = null;
-
-    return (...args: Parameters<T>) => {
-        const later = () => {
-            timeout = null;
-            func(...args);
-        };
-
-        if (timeout) {
-            clearTimeout(timeout);
-        }
-
-        timeout = setTimeout(later, wait);
-    };
-}
-
-
 const Map: React.FC<IMapProps> = ({ landlords }) => {
     const [searchAddress, setSearchAddress] = useState('');
     const [addressSuggestions, setAddressSuggestions] = useState<IAddress[]>([]);
     const [selectedCoords, setSelectedCoords] = useState({ latitude: -71.0589, longitude: 42.3601 });
     const [isCoordsSet, setIsCoordsSet] = useState(false);
-    const [selectedAddress, setSelectedAddress] = useState<IAddress>();
-
-    const router = useRouter();
-
-    const inputRef = useRef<HTMLInputElement>(null); // reference for searchbox
-    const suggestionsRef = useRef<HTMLUListElement>(null); // reference for suggestions
 
     // call /api/searchAddress with address parameter as input
     const fetchAddressSuggestions = async (searchAddress: string) => {
@@ -65,11 +39,6 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
         }
     };
 
-    // the debounced version of fetchAddressSuggestions
-    const debouncedFetchAddressSuggestions = debounce((searchAddress: string) => {
-        fetchAddressSuggestions(searchAddress);
-    }, 300);
-
     // Onclick search button
     // finds the address if input length is longer than 2
     const handleSearchClick = async () => {
@@ -79,44 +48,8 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
             setAddressSuggestions([]);
         }
     };
-
-    useEffect(() => {
-        // define the handler
-        const handleClickOutside = (event: MouseEvent) => {
-            // check if the click is outside
-            if (
-                inputRef.current && !inputRef.current.contains(event.target as Node) &&
-                suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)
-            ) {
-                setAddressSuggestions([]); // if it is, clear the suggestions
-            }
-        };
-
-        // add global listener
-        document.addEventListener('mousedown', handleClickOutside);
-
-        // remove listener
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    // handle search update
-    const handleSearchUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setSearchAddress(value);
-        if (value.length > 2) {
-            debouncedFetchAddressSuggestions(value);
-        } else {
-            setAddressSuggestions([]);
-        }
-    };
     
     const handleAddressSelection = async (address: IAddress) => {
-        setSelectedAddress(address);
-        const addressString = JSON.stringify(address);
-        const encodedAddress = encodeURIComponent(addressString);
-        router.push(`/map/detail?address=${encodeURIComponent(encodedAddress)}`);
         try {
             setIsCoordsSet(true);
             /**
@@ -178,11 +111,9 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
                     <div className="flex items-center">
                         <img src="/search-icon.svg" alt="saerch-icon" className="inline mx-2" />
                         <input 
-                            ref={inputRef}
                             type="text" 
                             value={searchAddress} 
-                            onChange={handleSearchUpdate}
-                            onClick={handleSearchClick}
+                            onChange={(e) => setSearchAddress(e.target.value)} 
                             placeholder="Search for an address" 
                             className="w-full py-2 px-1 rounded focus:outline-none placeholder:text-[#58585B]"
                             onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
@@ -190,7 +121,7 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
 
                     </div>
                     {addressSuggestions.length > 0 && (
-                        <ul ref={suggestionsRef} className="absolute mt-1 w-5/6 bg-white border border-gray-300 z-10">
+                        <ul className="absolute mt-1 w-5/6 bg-white border border-gray-300 z-10">
                             {addressSuggestions.map((address, index) => (
                                 <li 
                                     key={index} 
