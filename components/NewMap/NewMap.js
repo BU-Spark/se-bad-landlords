@@ -16,7 +16,6 @@ import React, { useState, useEffect } from 'react';
 
 
 const NewMap = ({ selectedCoords, isCoordsSet }) => {
-  const neighborhoodNameList = ["Back Bay", "Fenway-Kenmore", "Allston", "Beacon Hill", "Brighton", "Bay Village", "Charlestown", "South End"]
   const [viewport, setViewport] = useState({
     // initial state of viewport
     longitude: -71.0589,
@@ -25,15 +24,6 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
   });
   // sets the map size depending on the height
   const [mapHeight, setMapHeight] = useState(null);
-  // // sets the neighborhood data. Names and centers
-  // const [neighborhoods, setNeighborhoods] = useState(neighborhoodNameList.map(neighborhoodName => 
-  //   Object({
-  //     name: neighborhoodName,
-  //     longitude: 10.0,
-  //     latitude: 20.0,
-  //     zoom: 15
-  //   })
-  // ));
   
   useEffect(() => {
     setMapHeight(window.innerHeight * 0.7);
@@ -44,30 +34,6 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // useEffect(() => {
-  //   const promises = neighborhoodNameList.map(neighborhoodName => {
-  //     fetchNeiborhoodAddress(neighborhoodName)
-  //   })
-  //   Promise.all(promises)
-  //     .then(results => {
-  //       // results[index]: RowData[]
-  //       // type RowData = {
-  //       //   SAM_ADDRESS_ID: string,
-  //       //   X_COORD: string | null,
-  //       //   Y_COORD: string | null
-  //       // }
-  //       const neighborhoods = results.map((result, index) => Object({
-  //         name: neighborhoodNameList[index],
-  //         latitude: result.X_Coord,
-  //         longitude: result.Y_Coord
-  //       }))
-  //       setNeighborhoods(neighborhoods);
-  //     })
-  //     .catch(error => {
-  //       console.error("Error fetching data:", error);
-  //     });
-  //       // const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fullAddress}`);
-  // }, [])
 
   const handleMapClick = async (event) => {
     const clickedFeatures = event.target.queryRenderedFeatures(event.point);
@@ -112,25 +78,14 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
     }
   };
 
-
-  // async function fetchNeiborhoodAddress(neighborhoodName) {
-  //   try {
-  //     const res = await fetch(`/api/geojson/map-points3?neighborhoodName=${neighborhoodName}`);
-  //     if (res.ok) {
-  //       const geoJson = await res.json();
-  //       return geoJson
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   };
-  // }
-
   return(
     <>
     <div className="relative">
       <Map
         {...viewport}
-        onMove={evt => setViewport(evt.viewport)}
+        onMove={
+          evt => {setViewport(evt.viewState)}
+        }
         style={{
           width: '100%',
           height: mapHeight
@@ -170,14 +125,18 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
         <p className="mb-2 py-2 px-4 text-center font-bold font-montserrat text-xl">
           NEIGHBORHOODS
         </p>
-        {neighborhoodNameList.map((neighborhood, index) => (
+        {neighborhoods.map((neighborhood, index) => (
           <div key={index}>
             <button
-              key={neighborhood} // Add a unique key prop
-              onClick={() => alert(`Button ${neighborhood} clicked!`)}
+              key={index} // Add a unique key prop
+              onClick={() => {
+                // alert(`Button ${neighborhood.name} clicked!`);
+                const { name, ...vp } = neighborhood
+                setViewport(vp)
+              }}
               className="mb-2 py-2 px-4 bg-blue-500 text-white font-lora rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
             >
-              {neighborhood} {/* Display the neighborhood name */}
+              {neighborhood.name} {/* Display the neighborhood name */}
             </button>
           </div>
         ))}
@@ -187,11 +146,58 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
   )
 }
 
+const neighborhoods = [
+  {
+    name: "Back Bay",
+    latitude: 42.34935079219511,
+    longitude: -71.07768484195698,
+    zoom: 14.5
+  },
+  {
+    name: "Fenway-Kenmore",
+    latitude: 42.34410046840793,
+    longitude: -71.09149456439195,
+    zoom: 14.5
+  },
+  {
+    name: "Allston",
+    latitude: 42.354073887542484,
+    longitude: -71.12205552803877,
+    zoom: 14.5
+  },
+  {
+    name: "Beacon Hill",
+    latitude: 42.35772707692351,
+    longitude: -71.06063056114242,
+    zoom: 14.5
+  },
+  {
+    name: "Brighton",
+    latitude: 42.349807928693366,
+    longitude: -71.15428721858567,
+    zoom: 14
+  },
+  {
+    name: "Bay Village",
+    latitude: 42.34867038592486,
+    longitude: -71.0656615496278,
+    zoom: 15
+  },
+  {
+    name: "Charlestown",
+    latitude: 42.37803429987562,
+    longitude: -71.06114769366161,
+    zoom: 14.5
+  },
+  {
+    name: "South End",
+    latitude: 42.340878919021804,
+    longitude: -71.07653159645594,
+    zoom: 14.5
+  },
+]
+
 export default NewMap;
-/* Rectangle 494 */
-
-/* NEIGHBORHOODS */
-
 
 
 
