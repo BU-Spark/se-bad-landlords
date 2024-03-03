@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NewMap from '@components/NewMap/NewMap';
 import { useRouter } from 'next/router';
 
@@ -21,6 +21,24 @@ interface IAddress {
     ZIP_CODE: string;
 }
 
+// debounce function, ensure api requests are not made too frequently
+function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+    let timeout: NodeJS.Timeout | null = null;
+
+    return (...args: Parameters<T>) => {
+        const later = () => {
+            timeout = null;
+            func(...args);
+        };
+
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+
+        timeout = setTimeout(later, wait);
+    };
+}
+
 const Map: React.FC<IMapProps> = ({ landlords }) => {
     const [searchAddress, setSearchAddress] = useState('');
     const [addressSuggestions, setAddressSuggestions] = useState<IAddress[]>([]);
@@ -29,6 +47,9 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
     const [selectedAddress, setSelectedAddress] = useState<IAddress>();
 
     const router = useRouter();
+
+    const inputRef = useRef<HTMLInputElement>(null); // reference for searchbox
+    const suggestionsRef = useRef<HTMLUListElement>(null); // reference for suggestions
 
     // call /api/searchAddress with address parameter as input
     const fetchAddressSuggestions = async (searchAddress: string) => {
@@ -40,6 +61,43 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
             }
         } catch (error) {
             console.error(error);
+        }
+    };
+
+    // the debounced version of fetchAddressSuggestions
+    const debouncedFetchAddressSuggestions = debounce((searchAddress: string) => {
+        fetchAddressSuggestions(searchAddress);
+    }, 300);
+
+    useEffect(() => {
+        // define the handler
+        const handleClickOutside = (event: MouseEvent) => {
+            // check if the click is outside
+            if (
+                inputRef.current && !inputRef.current.contains(event.target as Node) &&
+                suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)
+            ) {
+                setAddressSuggestions([]); // if it is, clear the suggestions
+            }
+        };
+
+        // add global listener
+        document.addEventListener('mousedown', handleClickOutside);
+
+        // remove listener
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // handle search update
+    const handleSearchUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSearchAddress(value);
+        if (value.length > 2) {
+            debouncedFetchAddressSuggestions(value);
+        } else {
+            setAddressSuggestions([]);
         }
     };
 
@@ -119,9 +177,11 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
                     <div className="flex items-center">
                         <img src="/search-icon.svg" alt="saerch-icon" className="inline mx-2" />
                         <input 
+                            ref={inputRef}
                             type="text" 
                             value={searchAddress} 
-                            onChange={(e) => setSearchAddress(e.target.value)} 
+                            onClick={handleSearchClick}
+                            onChange={handleSearchUpdate} 
                             placeholder="Search for an address" 
                             className="w-full py-2 px-1 rounded focus:outline-none placeholder:text-[#58585B]"
                             onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
@@ -129,7 +189,7 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
 
                     </div>
                     {addressSuggestions.length > 0 && (
-                        <ul className="absolute mt-1 w-5/6 bg-white border border-gray-300 z-10">
+                        <ul ref={suggestionsRef} className="absolute mt-1 w-5/6 bg-white border border-gray-300 z-10">
                             {addressSuggestions.map((address, index) => (
                                 <li 
                                     key={index} 
