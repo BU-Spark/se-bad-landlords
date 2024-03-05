@@ -1,5 +1,17 @@
 # BadLandLords
 
+## Status notes from PR
+
+Refactored project to TypeScript with the new UI design.
+
+Next, we need to try hosting this project. We'll have to set up some env values in GitHub and deploy to Netlify. We will need at least DATABASE_URL and SITE_URL. SITE_URL is just the Netlify URL.
+
+Everything displayed on the site is working. I've added a feature using the OpenStreetMap API to get latitude and longitude, which helps to zoom into the map. Users will search for an address from the Live Street Address Management (SAM) dataset. Initially, I tried using the Building and Property Violations (BPV) dataset to get latitude and longitude. However, the issue is that SAM allows you to look for properties with no violations, whereas BPV doesn't have those data.
+
+https://docs.mapbox.com/mapbox-gl-js/example/popup-on-click/
+I also attempted to implement the modal popup when points are clicked, using something similar from the URL above. Another feature I wanted to add was making the circles larger. However, I couldn't figure out how to make these two features work.
+
+
 ## Project Description
 BadLandLords aims to increase the transparency of the Boston planning, zoning, and development process for its residents. This system will allow for tracking of property violations and provide a criterion for designating a property owner as a "scofflaw property owner" based on several factors.
 
