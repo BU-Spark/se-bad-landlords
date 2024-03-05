@@ -36,7 +36,7 @@ function debounce(func, wait) {
 
 
 
-const NewMap = ({ selectedCoords, isCoordsSet }) => {
+const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords }) => {
   const router = useRouter();
 
   const [searchAddress, setSearchAddress] = useState('');
@@ -102,9 +102,9 @@ const NewMap = ({ selectedCoords, isCoordsSet }) => {
 
   const handleAddressSelection = async (address) => {
     setSelectedAddress(address);
-    const addressString = JSON.stringify(address);
-    const encodedAddress = encodeURIComponent(addressString);
-    router.push(`/map/detail?address=${encodeURIComponent(encodedAddress)}`);
+    //const addressString = JSON.stringify(address);
+    //const encodedAddress = encodeURIComponent(addressString);
+    //router.push(`/map/detail?address=${encodeURIComponent(encodedAddress)}`);
     try {
         setIsCoordsSet(true);
         /**

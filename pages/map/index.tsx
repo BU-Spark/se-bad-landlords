@@ -213,7 +213,7 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
                 <div className='font-bold text-[#58585B] my-7 text-xl'>
                     FIND PROPERTIES WITH VIOLATIONS BY AREA
                 </div>
-                <NewMap selectedCoords={selectedCoords} isCoordsSet={isCoordsSet} />
+                <NewMap selectedCoords={selectedCoords} isCoordsSet={isCoordsSet} setIsCoordsSet={setIsCoordsSet} setSelectedCoords={setSelectedCoords}/>
 
                 {/*this shows top 10 landlords using getStaticProps*/}
                 <div className='font-bold text-[#58585B] mt-12 mb-10 text-xl'>
