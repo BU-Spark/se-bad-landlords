@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import NewMap from '@components/NewMap/NewMap';
 import { useRouter } from 'next/router';
+import { useSearchAPI, IAddress } from '../api/search'; // Adjust the import path based on your file structure
+
 
 interface ILandlord {
     OWNER: string;
@@ -11,40 +13,49 @@ interface ILandlord {
 interface IMapProps {
     landlords: ILandlord[];
 }
-interface IAddress {
-    FULL_ADDRESS: string;
-    MAILING_NEIGHBORHOOD: string;
-    PARCEL: string;
-    SAM_ADDRESS_ID: string;
-    X_COORD: string;
-    Y_COORD: string;
-    ZIP_CODE: string;
-}
+// interface IAddress {
+//     FULL_ADDRESS: string;
+//     MAILING_NEIGHBORHOOD: string;
+//     PARCEL: string;
+//     SAM_ADDRESS_ID: string;
+//     X_COORD: string;
+//     Y_COORD: string;
+//     ZIP_CODE: string;
+// }
 
 // debounce function, ensure api requests are not made too frequently
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout | null = null;
+// function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+//     let timeout: NodeJS.Timeout | null = null;
 
-    return (...args: Parameters<T>) => {
-        const later = () => {
-            timeout = null;
-            func(...args);
-        };
+//     return (...args: Parameters<T>) => {
+//         const later = () => {
+//             timeout = null;
+//             func(...args);
+//         };
 
-        if (timeout) {
-            clearTimeout(timeout);
-        }
+//         if (timeout) {
+//             clearTimeout(timeout);
+//         }
 
-        timeout = setTimeout(later, wait);
-    };
-}
+//         timeout = setTimeout(later, wait);
+//     };
+// }
 
 const Map: React.FC<IMapProps> = ({ landlords }) => {
-    const [searchAddress, setSearchAddress] = useState('');
-    const [addressSuggestions, setAddressSuggestions] = useState<IAddress[]>([]);
+    const {
+        searchAddress,
+        addressSuggestions,
+        handleSearchUpdate,
+        handleSearchClick,
+        setSearchAddress,
+        setAddressSuggestions
+    } = useSearchAPI();
+
+    // const [searchAddress, setSearchAddress] = useState('');
+    // const [addressSuggestions, setAddressSuggestions] = useState<IAddress[]>([]);
     const [selectedCoords, setSelectedCoords] = useState({ latitude: -71.0589, longitude: 42.3601 });
     const [isCoordsSet, setIsCoordsSet] = useState(false);
-    const [selectedAddress, setSelectedAddress] = useState<IAddress>();
+    // const [selectedAddress, setSelectedAddress] = useState<IAddress>();
 
     const router = useRouter();
 
@@ -52,22 +63,22 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
     const suggestionsRef = useRef<HTMLUListElement>(null); // reference for suggestions
 
     // call /api/searchAddress with address parameter as input
-    const fetchAddressSuggestions = async (searchAddress: string) => {
-        try {
-            const res = await fetch(`/api/addresses?search=${searchAddress}`);
-            if (res.ok) {
-                const suggestions = await res.json();
-                setAddressSuggestions(suggestions);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    // const fetchAddressSuggestions = async (searchAddress: string) => {
+    //     try {
+    //         const res = await fetch(`/api/addresses?search=${searchAddress}`);
+    //         if (res.ok) {
+    //             const suggestions = await res.json();
+    //             setAddressSuggestions(suggestions);
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
 
     // the debounced version of fetchAddressSuggestions
-    const debouncedFetchAddressSuggestions = debounce((searchAddress: string) => {
-        fetchAddressSuggestions(searchAddress);
-    }, 300);
+    // const debouncedFetchAddressSuggestions = debounce((searchAddress: string) => {
+    //     fetchAddressSuggestions(searchAddress);
+    // }, 300);
 
     useEffect(() => {
         // define the handler
@@ -91,28 +102,28 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
     }, []);
 
     // handle search update
-    const handleSearchUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setSearchAddress(value);
-        if (value.length > 2) {
-            debouncedFetchAddressSuggestions(value);
-        } else {
-            setAddressSuggestions([]);
-        }
-    };
+    // const handleSearchUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const value = event.target.value;
+    //     setSearchAddress(value);
+    //     if (value.length > 2) {
+    //         debouncedFetchAddressSuggestions(value);
+    //     } else {
+    //         setAddressSuggestions([]);
+    //     }
+    // };
 
     // Onclick search button
     // finds the address if input length is longer than 2
-    const handleSearchClick = async () => {
-        if (searchAddress.length > 2) {
-            await fetchAddressSuggestions(searchAddress);
-        } else {
-            setAddressSuggestions([]);
-        }
-    };
+    // const handleSearchClick = async () => {
+    //     if (searchAddress.length > 2) {
+    //         await fetchAddressSuggestions(searchAddress);
+    //     } else {
+    //         setAddressSuggestions([]);
+    //     }
+    // };
     
     const handleAddressSelection = async (address: IAddress) => {
-        setSelectedAddress(address);
+        // setSelectedAddress(address);
         const addressString = JSON.stringify(address);
         const encodedAddress = encodeURIComponent(addressString);
         router.push(`/map/detail?address=${encodeURIComponent(encodedAddress)}`);
