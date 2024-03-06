@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import NewMap from '@components/NewMap/NewMap';
 import { useRouter } from 'next/router';
-import { useSearchAPI, IAddress } from '../api/search'; // Adjust the import path based on your file structure
+import { useSearchAPI, IAddress } from '../api/search';
 
 
 interface ILandlord {
