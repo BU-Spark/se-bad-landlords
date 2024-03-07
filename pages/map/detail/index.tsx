@@ -59,12 +59,14 @@ function DetailPage() {
     const fetchViolations = async (sam_id: string) => {
         try {
             const res = await fetch(`/api/violations?sam_id=${sam_id}`);
-            if (res.ok) {
-                const data = await res.json();
-                setViolations(data);
-                console.log("data:" + data);
+            if (!res.ok) {
+                throw new Error('Network response was not ok.');
             }
+            const data = await res.json();
+            setViolations(data);
+            console.log("data:" + data);
         } catch (error) {
+            setViolations([]);
             console.error(error);
         }
     };
@@ -158,7 +160,7 @@ function DetailPage() {
                     <tbody>
                         <tr>
                             <td className="px-2 py-3 border-b border-gray-200 bg-white text-3xl text-right">
-                                <button onClick={toggleTableVisibility_st} className="font-bold">{"›"}</button>
+                                <button onClick={toggleTableVisibility_st} className={`font-bold ${expandTableVisible_st ? 'transform rotate-90' : ''}`}>{"›"}</button>
                             </td>
                             <td className="px-2 py-3 border-b border-gray-200 bg-white">
                                 <p className="text-gray-900 whitespace-no-wrap">{violations.length > 0 ? violations[0].case_no : ""}</p>
@@ -262,7 +264,7 @@ function DetailPage() {
                     <tbody>
                         <tr>
                             <td className="px-2 py-3 border-b border-gray-200 bg-white text-3xl text-right">
-                                <button onClick={toggleTableVisibility_la} className="font-bold">{"›"}</button>
+                                <button onClick={toggleTableVisibility_la} className={`font-bold ${expandTableVisible_la ? 'transform rotate-90' : ''}`}>{"›"}</button>
                             </td>
                             <td className="px-2 py-3 border-b border-gray-200 bg-white">
                                 <p className="text-gray-900 whitespace-no-wrap">{violations.length > 0 ? violations[0].case_no : ""}</p>
