@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      borderWidth: {
+        '0.5': '0.5px',
+      },
       backgroundImage: {
         'map-page-image': "url('/map-page-image.png')"
       },
@@ -15,8 +18,13 @@ const config: Config = {
         '9/10': '90%',
       },
       colors: {
-        'navbar-orange': '#FB4D42'
-      }
+        'navbar-orange': '#FB4D42',
+        'neighborhood-dark-blue': '#021C66'
+      },
+      fontFamily: {
+        montserrat: ["Montserrat", "sans-serif"],
+        lora: ["Lora", "sans-serif"],
+      },
     },
   },
   plugins: [],
