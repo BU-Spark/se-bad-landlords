@@ -12,6 +12,7 @@ import {
   neighborhoodsData,
   censusData,
   violationsData,
+  neighborhoods
 }
 from './data';
 import React, { useState, useEffect, useRef } from 'react';
@@ -288,56 +289,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   )
 }
 
-const neighborhoods = [
-  {
-    name: "Back Bay",
-    latitude: 42.34935079219511,
-    longitude: -71.07768484195698,
-    zoom: 14.5
-  },
-  {
-    name: "Fenway-Kenmore",
-    latitude: 42.34410046840793,
-    longitude: -71.09149456439195,
-    zoom: 14.5
-  },
-  {
-    name: "Allston",
-    latitude: 42.354073887542484,
-    longitude: -71.12205552803877,
-    zoom: 14.5
-  },
-  {
-    name: "Beacon Hill",
-    latitude: 42.35772707692351,
-    longitude: -71.06063056114242,
-    zoom: 14.5
-  },
-  {
-    name: "Brighton",
-    latitude: 42.349807928693366,
-    longitude: -71.15428721858567,
-    zoom: 14
-  },
-  {
-    name: "Bay Village",
-    latitude: 42.34867038592486,
-    longitude: -71.0656615496278,
-    zoom: 15
-  },
-  {
-    name: "Charlestown",
-    latitude: 42.37803429987562,
-    longitude: -71.06114769366161,
-    zoom: 14.5
-  },
-  {
-    name: "South End",
-    latitude: 42.340878919021804,
-    longitude: -71.07653159645594,
-    zoom: 14.5
-  },
-]
+
 
 export default NewMap;
 
