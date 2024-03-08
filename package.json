@@ -3,7 +3,8 @@
   "version": "0.5.0",
   "private": true,
   "scripts": {
-    "start": "next dev",
+    "start": "next start",
+    "test": "cypress open",
     "dev": "next dev",
     "build": "prisma generate && next build",
     "export": "next export",
