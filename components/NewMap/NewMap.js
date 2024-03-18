@@ -1,5 +1,6 @@
-import Map, { Source, Layer } from 'react-map-gl';
+import Map, { Source, Layer, Popup } from 'react-map-gl';
 import { useRouter } from 'next/router';
+import Card from '../Card/Card';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {
@@ -45,6 +46,31 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   const [selectedAddress, setSelectedAddress] = useState();
   const inputRef = useRef(null); // reference for searchbox
   const suggestionsRef = useRef(null); // reference for suggestions
+  const [geoJsonData, setGeoJsonData] = useState(null); //geojson data
+  const [showCards, setShowCards] = useState(false); // trigger for card display
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('/api/geojson/map-points2');
+      if (response.ok) {
+        const data = await response.json();
+        setGeoJsonData(data);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const onMove = evt => {
+    const nextViewport = evt.viewState;
+    setViewport(nextViewport); // update viewport
+  
+    // check if cards should be displayed
+    const shouldShowCards = nextViewport.zoom > 15;
+    setShowCards(shouldShowCards);
+  
+    // TODO: check the map range, only display card within the range
+  };
 
   const [viewport, setViewport] = useState({
     // initial state of viewport
@@ -196,9 +222,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
     <div className="relative">
       <Map
         {...viewport}
-        onMove={
-          evt => {setViewport(evt.viewState)}
-        }
+        onMove={onMove}
         style={{
           width: '100%',
           height: mapHeight
@@ -261,6 +285,21 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
           <Layer {...clusterViolationsCountLayer} />
           <Layer {...unclusteredViolationsLayer} />
         </Source>
+        
+        {/* add cards to the map */}
+        {showCards && geoJsonData && geoJsonData.features.map((feature, index) => (
+          <Popup
+            key={index}
+            latitude={feature.geometry.coordinates[1]}
+            longitude={feature.geometry.coordinates[0]}
+            closeButton={false}
+            closeOnClick={true}
+            anchor="top"
+          >
+            <Card properties={feature.properties} />
+          </Popup>
+        ))}
+
       </Map>
 
       {/* The neighborhood buttons */}
