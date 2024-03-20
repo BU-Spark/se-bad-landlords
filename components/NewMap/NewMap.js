@@ -1,4 +1,5 @@
 import Map, { Source, Layer, Popup } from 'react-map-gl';
+import { WebMercatorViewport } from 'viewport-mercator-project';
 import { useRouter } from 'next/router';
 import Card from '../Card/Card';
 
@@ -40,6 +41,8 @@ function debounce(func, wait) {
 
 const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords }) => {
   const router = useRouter();
+  const mapContainerRef = useRef(null);
+
 
   const [searchAddress, setSearchAddress] = useState('');
   const [addressSuggestions, setAddressSuggestions] = useState([]);
@@ -48,6 +51,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   const suggestionsRef = useRef(null); // reference for suggestions
   const [geoJsonData, setGeoJsonData] = useState(null); //geojson data
   const [showCards, setShowCards] = useState(false); // trigger for card display
+  const [viewportBounds, setViewportBounds] = useState({ west: null, south: null, east: null, north: null }); // bound of the map
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +73,27 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
     const shouldShowCards = nextViewport.zoom > 15;
     setShowCards(shouldShowCards);
   
-    // TODO: check the map range, only display card within the range
+    // update the map edge
+    const width = mapContainerRef.current.offsetWidth;
+    const height = mapContainerRef.current.offsetHeight;
+
+    const viewport = new WebMercatorViewport({
+      width,
+      height,
+      latitude: nextViewport.latitude,
+      longitude: nextViewport.longitude,
+      zoom: nextViewport.zoom
+    });
+    const bounds = viewport.getBounds();
+    // console.log(bounds);
+    const [west, south] = bounds[0];
+    const [east, north] = bounds[1];
+    setViewportBounds({
+      west: west,
+      south: south,
+      east: east,
+      north: north,
+    });  
   };
 
   const [viewport, setViewport] = useState({
@@ -219,7 +243,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
 
   return(
     <>
-    <div className="relative">
+    <div className="relative" ref={mapContainerRef} style={{ width: '100%', height: mapHeight }}>
       <Map
         {...viewport}
         onMove={onMove}
@@ -287,18 +311,40 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
         </Source>
         
         {/* add cards to the map */}
-        {showCards && geoJsonData && geoJsonData.features.map((feature, index) => (
-          <Popup
-            key={index}
-            latitude={feature.geometry.coordinates[1]}
-            longitude={feature.geometry.coordinates[0]}
-            closeButton={false}
-            closeOnClick={true}
-            anchor="top"
-          >
-            <Card properties={feature.properties} />
-          </Popup>
-        ))}
+        {showCards && geoJsonData && geoJsonData.features.map((feature, index) => {
+          const lat = feature.geometry.coordinates[1];
+          const lng = feature.geometry.coordinates[0];
+          // console.log("point: "+ lat + ", " + lng);
+          // console.log("bound: " + viewportBounds.south + ", " + viewportBounds.north + ", " + viewportBounds.west + ", " + viewportBounds.east);
+          
+          // check the bound
+          const isInViewport = 
+            lat >= viewportBounds.south &&
+            lat <= viewportBounds.north &&
+            lng >= viewportBounds.west &&
+            lng <= viewportBounds.east;
+
+          // only return the card if its in the viewport
+          if (isInViewport) {
+            console.log("in the range");
+            return (
+              <Popup
+                key={index}
+                latitude={lat}
+                longitude={lng}
+                closeButton={false}
+                closeOnClick={true}
+                anchor="top"
+              >
+                <Card properties={feature.properties} />
+              </Popup>
+            );
+          }
+
+          // else return nothing
+          return null;
+        })}
+
 
       </Map>
 
