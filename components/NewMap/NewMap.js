@@ -1,6 +1,7 @@
 import Map, { Source, Layer, Popup } from 'react-map-gl';
 import { WebMercatorViewport } from 'viewport-mercator-project';
 import { useRouter } from 'next/router';
+import { TailSpin } from 'react-loader-spinner';
 import Card from '../Card/Card';
 import MapSearchbar from '../MapSearchbar/MapSearchbar'
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -18,26 +19,6 @@ import {
 }
 from './data';
 import React, { useState, useEffect, useRef } from 'react';
-
-// debounce function, ensure api requests are not made too frequently
-function debounce(func, wait) {
-  let timeout = null;
-
-  return (...args) => {
-      const later = () => {
-          timeout = null;
-          func(...args);
-      };
-
-      if (timeout) {
-          clearTimeout(timeout);
-      }
-
-      timeout = setTimeout(later, wait);
-  };
-}
-
-
 
 const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords }) => {
   const router = useRouter();
@@ -112,6 +93,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
     setMapLoading(false)
   }
 
+  // <Map> onClick=
   const handleMapClick = async (event) => {
     const map = event.target;
     const clickedFeatures = event.target.queryRenderedFeatures(event.point);
@@ -207,6 +189,21 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   
   return(
     <>
+    <div className='relative'>
+      {mapLoading && <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: mapHeight,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(255, 255, 255, 0.5)', // Light overlay, adjust as needed
+        }}>
+          <TailSpin color="#00BFFF" height={80} width={80} />
+        </div>}
+    </div>
     <div className="relative" ref={mapContainerRef} style={{ width: '100%', height: mapHeight }}>
       <Map
         {...viewport}
