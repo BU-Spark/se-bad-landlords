@@ -51,7 +51,7 @@ export const neighborhoodsBordersLayer = {
   layout: {},
   paint: {
     'line-color': 'blue',
-    'line-width': 1
+    'line-width': 0.5
   },
 }
 
