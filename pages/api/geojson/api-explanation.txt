@@ -6,6 +6,3 @@ map-points1:
 
 map-points2:
     show all properties that has a owner with 6 or more violations.
-
-map-points3:
-    show all adddress 

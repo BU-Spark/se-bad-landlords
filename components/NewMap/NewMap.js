@@ -25,8 +25,10 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null) // the <Map/> component
   const [mapLoading, setMapLoading] = useState(true) // whether the map is loading
-  const [geoJsonData, setGeoJsonData] = useState(null); //geojson data
+  // uncomment this if want to fetch data manually instead of from map
+  // const [geoJsonData, setGeoJsonData] = useState(null); 
   const [showCards, setShowCards] = useState(false); // trigger for card display
+  const [cardPopup, setCardPopup] = useState(null)
   const [viewportBounds, setViewportBounds] = useState({ west: null, south: null, east: null, north: null }); // bound of the map
   const [hoveredNeighborhoodFeatureId, setHoveredNeighborhoodFeatureId] = useState(null) // The feature.id of the neighborhood the mouse is hovering
   const [viewport, setViewport] = useState({
@@ -38,18 +40,6 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   // sets the map size depending on the height
   const [mapHeight, setMapHeight] = useState(null);
   
-  // init the geojson data using api map-points2
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('/api/geojson/map-points2');
-      if (response.ok) {
-        const data = await response.json();
-        setGeoJsonData(data);
-      }
-    };
-
-    fetchData();
-  }, []);
   
   // init the map height
   useEffect(() => {
@@ -73,22 +63,6 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
     }
   }, [selectedCoords, isCoordsSet]);
 
-  const fetchPropertyDetails = async (samId) => {
-    try {
-      const response = await fetch(`/api/property/details?sam_id=${samId}`);
-      
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      return data;
-    } catch (error) {
-      console.error("API Error:", error);
-      return null;
-    }
-  };
 
   // <Map> onLoad=
   const handleMapLoad = (event) => {
@@ -98,25 +72,42 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   // <Map> onClick=
   const handleMapClick = async (event) => {
     const map = event.target;
-    const clickedFeatures = event.target.queryRenderedFeatures(event.point);
-    if (clickedFeatures && clickedFeatures.length > 0 && clickedFeatures[0].source === 'violations') {
-      const feature = clickedFeatures[0];
-      if (feature.properties.SAM_ID != null) {
-        // implement the modal pop-up here changing the state to true
-        alert(`SAM_ID: ${feature.properties.SAM_ID}`);
-        const propertyDetails = await fetchPropertyDetails(feature.properties.SAM_ID);
-        if (propertyDetails) {
-          console.log(propertyDetails);
-        }
-      }
+    const selectedFeatures = event.target.queryRenderedFeatures(event.point, {layers: ["unclustered-violations", "clustered-violations", "cluster-violations-count"]});
+    if(selectedFeatures.length > 0){
+      console.log("The feature stored in Map is: ", selectedFeatures[0])
     }
+    if (selectedFeatures && selectedFeatures.length > 0 && selectedFeatures[0].source === 'violations') {
+      const selectedFeature = selectedFeatures[0];
+      console.log(`feature.layer.id: ${selectedFeature.layer.id}`)
+      if(selectedFeature.layer.id === "unclustered-violations"){ // a red point is clicked
+        if (selectedFeature.properties.SAM_ID !== null) {
+          // implement the modal pop-up here changing the state to true
+          // alert(`SAM_ID: ${selectedFeature.properties.SAM_ID}`);
+          console.log("DEBUG the type of selectedFeature.properties.addressDetails is", typeof selectedFeature.properties.addressDetails)
+          setCardPopup({
+            longitude: selectedFeature.geometry.coordinates[0],
+            latitude: selectedFeature.geometry.coordinates[1],
+            properties: {
+              SAM_ID: selectedFeature.properties.SAM_ID,
+              addressDetails: JSON.parse(selectedFeature.properties.addressDetails)
+            }
+          })
+        }
+      } else if(selectedFeature.layer.id === "clustered-violations" || selectedFeature.layer.id === "cluster-violations-count" ) { // a yellow cluster is clicked
+        if (selectedFeature.properties.cluster_id !== null) {
+          alert(`cluster_id: ${selectedFeature.properties.cluster_id}`)
+        }
+      } 
+    } // 
   }
   
   // <Map> onMove = 
   const handleMapMove = (evt) => {
+    
     const nextViewport = evt.viewState;
     setViewport(nextViewport); // update viewport
-  
+    
+    // TODO 
     // check if cards should be displayed
     const shouldShowCards = nextViewport.zoom > 15;
     setShowCards(shouldShowCards);
@@ -148,41 +139,50 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   const handleMapMouseMove = (event) => {
     if(mapLoading === true) return
     const map = event.target;
-    const selectedFeatures = map.queryRenderedFeatures(event.point, {layers: ["neighborhoods-fills"]});
-    if(selectedFeatures && selectedFeatures.length > 0) {
-      
-      const selectedFeature = selectedFeatures[0]; // the selected neighborhood feature.
-      /* Better take a look at what does a feature look like */
-      // console.log(selectedFeature) 
-      if (hoveredNeighborhoodFeatureId === null){
-        // console.log(1)
-        setHoveredNeighborhoodFeatureId(selectedFeature.id)
-        map.setFeatureState(
-          {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: selectedFeature.id,}, 
-          {hover: true,}
-        );
-      } else if (hoveredNeighborhoodFeatureId !== null && hoveredNeighborhoodFeatureId === selectedFeature.id){
-        // console.log(2)
-        // remains in the same neighborhood. do nothing
-      } else if (hoveredNeighborhoodFeatureId !== null && hoveredNeighborhoodFeatureId !== selectedFeature.id){
-        // console.log(3)
-        // move to a new one
-        setHoveredNeighborhoodFeatureId(selectedFeature.id);
-        map.setFeatureState(
-          {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: selectedFeature.id,}, 
-          {hover: true,}
-        );
+    { // neighborhoods-layer
+      const selectedFeatures = map.queryRenderedFeatures(event.point, {layers: ["neighborhoods-fills"]});
+      if(selectedFeatures && selectedFeatures.length > 0) {
+        const selectedFeature = selectedFeatures[0]; // the selected neighborhood feature.
+        /* Better take a look at what does a feature look like */
+        // console.log(selectedFeature) 
+        if (hoveredNeighborhoodFeatureId === null){
+          // console.log(1)
+          setHoveredNeighborhoodFeatureId(selectedFeature.id)
+          map.setFeatureState(
+            {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: selectedFeature.id,}, 
+            {hover: true,}
+          );
+        } else if (hoveredNeighborhoodFeatureId !== null && hoveredNeighborhoodFeatureId === selectedFeature.id){
+          // console.log(2)
+          // remains in the same neighborhood. do nothing
+        } else if (hoveredNeighborhoodFeatureId !== null && hoveredNeighborhoodFeatureId !== selectedFeature.id){
+          // console.log(3)
+          // move to a new one
+          setHoveredNeighborhoodFeatureId(selectedFeature.id);
+          map.setFeatureState(
+            {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: selectedFeature.id,}, 
+            {hover: true,}
+          );
+          map.setFeatureState(
+            {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: hoveredNeighborhoodFeatureId,}, 
+            {hover: false,}
+          );
+        }
+      } else {
         map.setFeatureState(
           {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: hoveredNeighborhoodFeatureId,}, 
           {hover: false,}
         );
+        setHoveredNeighborhoodFeatureId(null)
       }
-    } else {
-      map.setFeatureState(
-        {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: hoveredNeighborhoodFeatureId,}, 
-        {hover: false,}
-      );
-      setHoveredNeighborhoodFeatureId(null)
+    }
+    { // violations layer
+      const selectedFeatures = map.queryRenderedFeatures(event.point, {layers: ["unclustered-violations"]});
+      if(selectedFeatures && selectedFeatures.length > 0){
+        map.getCanvas().style.cursor = 'pointer'; // Change cursor to pointer
+      } else {
+        map.getCanvas().style.cursor = ''; // Change cursor to pointer
+      }
     }
   }
   const handleMapMouseLeave = () => {
@@ -250,45 +250,35 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
           <Layer {...clusterViolationsCountLayer} />
           <Layer {...unclusteredViolationsLayer} />
         </Source>
-        
-        {/* add cards to the map */}
-        {showCards && geoJsonData && geoJsonData.features.map((feature, index) => {
-          const lat = feature.geometry.coordinates[1];
-          const lng = feature.geometry.coordinates[0];
-          // console.log("point: "+ lat + ", " + lng);
-          // console.log("bound: " + viewportBounds.south + ", " + viewportBounds.north + ", " + viewportBounds.west + ", " + viewportBounds.east);
-          
-          // check the bound
-          const isInViewport = 
-            lat >= viewportBounds.south &&
-            lat <= viewportBounds.north &&
-            lng >= viewportBounds.west &&
-            lng <= viewportBounds.east;
+        { cardPopup && 
+          <div>
+              hadfajmfkoidsaoi
+          <Popup
+          // MUST add a key here. Or else Mapbox will destroy the Popup.
+          // which prevent the second & more popup from showing up (how terrible!)
+            key={cardPopup.latitude + cardPopup.longitude}
+            latitude={cardPopup.latitude}
+            longitude={cardPopup.longitude}
+            closeButton={false}
+            closeOnClick={true}
+            anchor="top"
+          >
+            <Card 
+              properties={cardPopup.properties} 
+            />
+          </Popup>
+          </div>}
 
-          // only return the card if its in the viewport
-          if (isInViewport) {
-            // console.log("in the range");
-            return (
-              <Popup
-                key={index}
-                latitude={lat}
-                longitude={lng}
-                closeButton={false}
-                closeOnClick={true}
-                anchor="top"
-              >
-                <Card properties={feature.properties} />
-              </Popup>
-            );
-          } else return null;
-        })}
       </Map>
+
 
       {/* The neighborhood buttons */}
       <div className="absolute top-5 right-5 z-10 bg-white p-4 rounded-lg shadow-md">
         <p className="mb-2 py-2 px-4 text-center font-bold font-montserrat text-xl">
           NEIGHBORHOODS
         </p>
+        <p>{cardPopup?.latitude}</p>
+        <p>{cardPopup?.longitude}</p>
         {neighborhoods.map((neighborhood, index) => (
           <div key={index}>
             <button

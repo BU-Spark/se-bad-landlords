@@ -67,18 +67,14 @@ export const neighborhoodsBordersLayer = {
         coordinates: [row.longitude, row.latitude],
       },
       properties: {
-        SAM_ID: row.sam_id,
-        FULL_ADDRESS: row.full_address,
-        MAILING_NEIGHBORHOOD: row.mailing_neighborhood,
-        ZIP_CODE: row.zip_code,
-        parcel: row.parcel
+        SAM_ID: row.sam_id
       },
     })),
   };
 */
 export const violationsData = {
   type: 'geojson',
-  url: '/api/geojson/map-points2'
+  url: '/api/geojson/map-points3'
 }
 
 // small dots indicating individual points of the map styles

@@ -10,10 +10,6 @@ type RowData = {
   sam_id: string;
   latitude: string;
   longitude: string;
-  full_address: string;
-  mailing_neighborhood: string;
-  zip_code: string;
-  parcel: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -41,11 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       SELECT
           bpv."sam_id",
           bpv."latitude",
-          bpv."longitude",
-          MAX(sam."FULL_ADDRESS") AS "FULL_ADDRESS", 
-          MAX(sam."MAILING_NEIGHBORHOOD") AS "MAILING_NEIGHBORHOOD",
-          MAX(sam."ZIP_CODE") AS "ZIP_CODE",
-          MAX(sam."PARCEL") AS "PARCEL"
+          bpv."longitude"
       FROM
           sam
       JOIN
@@ -68,10 +60,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         properties: {
           SAM_ID: row.sam_id,
-          FULL_ADDRESS: row.full_address,
-          MAILING_NEIGHBORHOOD: row.mailing_neighborhood,
-          ZIP_CODE: row.zip_code,
-          parcel: row.parcel
         },
       })),
     };
