@@ -6,9 +6,13 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 type RowData = {
+  sam_id: string;
   latitude: string;
   longitude: string;
-  sam_id: string;
+  full_address: string;
+  mailing_neighborhood: string;
+  zip_code: string;
+  parcel: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -34,9 +38,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             COUNT(bpv."sam_id") > 5
       )
       SELECT
+          bpv."sam_id",
           bpv."latitude",
           bpv."longitude",
-          bpv."sam_id"
+          MAX(sam."FULL_ADDRESS") AS "FULL_ADDRESS", 
+          MAX(sam."MAILING_NEIGHBORHOOD") AS "MAILING_NEIGHBORHOOD",
+          MAX(sam."ZIP_CODE") AS "ZIP_CODE",
+          MAX(sam."PARCEL") AS "PARCEL"
       FROM
           sam
       JOIN
@@ -46,8 +54,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       WHERE
           property."OWNER" IN (SELECT "OWNER" FROM OwnersWithViolations)
       group by
-          bpv."latitude", bpv."longitude", bpv."sam_id";`;
-
+          bpv."latitude", bpv."longitude", bpv."sam_id";
+    `
     // SQL to geoJson
     const geoJson = {
       type: "FeatureCollection",
@@ -58,11 +66,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           coordinates: [row.longitude, row.latitude],
         },
         properties: {
-          SAM_ID: row.sam_id
+          SAM_ID: row.sam_id,
+          FULL_ADDRESS: row.full_address,
+          MAILING_NEIGHBORHOOD: row.mailing_neighborhood,
+          ZIP_CODE: row.zip_code,
+          parcel: row.parcel
         },
       })),
     };
-
     res.status(200).json(geoJson);
   } catch (error) {
     console.error(error);
