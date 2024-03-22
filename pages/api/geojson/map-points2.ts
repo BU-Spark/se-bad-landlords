@@ -3,7 +3,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
+import prisma from "../../../prisma/prismaClient"
 
 type RowData = {
   sam_id: string;
@@ -78,5 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while fetching data.' });
+  } finally {
+    await prisma.$disconnect();
   }
 }

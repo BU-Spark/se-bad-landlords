@@ -23,8 +23,8 @@ import React, { useState, useEffect, useRef } from 'react';
 const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords }) => {
   const router = useRouter();
   const mapContainerRef = useRef(null);
-  const mapRef = useRef(null)
-  const [mapLoading, setMapLoading] = useState(true)
+  const mapRef = useRef(null) // the <Map/> component
+  const [mapLoading, setMapLoading] = useState(true) // whether the map is loading
   const [geoJsonData, setGeoJsonData] = useState(null); //geojson data
   const [showCards, setShowCards] = useState(false); // trigger for card display
   const [viewportBounds, setViewportBounds] = useState({ west: null, south: null, east: null, north: null }); // bound of the map
@@ -38,6 +38,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   // sets the map size depending on the height
   const [mapHeight, setMapHeight] = useState(null);
   
+  // init the geojson data using api map-points2
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch('/api/geojson/map-points2');
@@ -50,6 +51,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
     fetchData();
   }, []);
   
+  // init the map height
   useEffect(() => {
     setMapHeight(window.innerHeight * 0.7);
     const handleResize = () => {
@@ -59,7 +61,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-
+  // init the viewport
   useEffect(() => {
     if (selectedCoords.latitude && selectedCoords.longitude && isCoordsSet) {
       setViewport({
@@ -265,7 +267,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
 
           // only return the card if its in the viewport
           if (isInViewport) {
-            console.log("in the range");
+            // console.log("in the range");
             return (
               <Popup
                 key={index}

@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
+import prisma from "../../../prisma/prismaClient"
 
 type RowData = {
     SAM_ADDRESS_ID: string,

@@ -2,7 +2,8 @@
 // then grabs the data related to sam_id
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
+import prisma from "../../../prisma/prismaClient"
 
 export default async function handler(req, res) {
   try {
@@ -72,5 +73,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred.' });
+  } finally {
+    await prisma.$disconnect();
   }
 }

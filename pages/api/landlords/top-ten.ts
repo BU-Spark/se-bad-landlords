@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
+import prisma from "../../../prisma/prismaClient"
 
 const TopTen = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -10,6 +11,8 @@ const TopTen = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Can not fetch the landlords.' });
+    } finally {
+        await prisma.$disconnect();
     }
 };
 
