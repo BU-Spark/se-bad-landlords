@@ -1,11 +1,11 @@
-export const censusData = {
+export const censusData: any = {
   type: 'vector',
   url: 'mapbox://spark-badlandlords.cxyyru86'
 }
 
 // block data and layers
 // fills each neighborhoods
-export const blockLayer = {
+export const blockLayer: any = {
   id: 'census-block-layer',
   type: 'fill',
   source: {
@@ -22,11 +22,11 @@ export const blockLayer = {
 
 // neighborhoods data and layers
 // out lines the neighborhoods by changing color values of paint
-export const neighborhoodsData = {
+export const neighborhoodsData: any = {
   type: 'vector',
   url: 'mapbox://spark-badlandlords.8o9j3v7f'
 }
-export const neighborhoodsLayer = {
+export const neighborhoodsLayer: any = {
   id: 'neighborhoods-fills',
   type: 'fill',
   source: 'neighborhoodsData',
@@ -43,7 +43,7 @@ export const neighborhoodsLayer = {
     // 'fill-opacity': 0
   }
 }
-export const neighborhoodsBordersLayer = {
+export const neighborhoodsBordersLayer: any = {
   id: 'neighborhoods-borders',
   type: 'line',
   source: 'neighborhoodsData',
@@ -72,20 +72,21 @@ export const neighborhoodsBordersLayer = {
     })),
   };
 */
-export const violationsData = {
+export const violationsData: any = {
   type: 'geojson',
   url: '/api/geojson/map-points3'
 }
 
 // small dots indicating individual points of the map styles
-export const unclusteredViolationsLayer = {
+export const unclusteredViolationsLayer: any = {
   id: 'unclustered-violations',
   type: 'circle',
   source: 'violationsData',
   filter: [
     '!',
     ['has', 'point_count']
-  ],
+  ] as ['!', ['has', 'point_count']],
+  
   paint: {
     'circle-color': '#FB4D42',
     'circle-radius': 6,
@@ -95,7 +96,7 @@ export const unclusteredViolationsLayer = {
 }
 
 // clustered circles styles
-export const clusteredViolationsLayer = {
+export const clusteredViolationsLayer: any = {
   id: 'clustered-violations',
   type: 'circle',
   source: 'violationsData',
@@ -107,7 +108,7 @@ export const clusteredViolationsLayer = {
     'circle-stroke-color': ['step', ['get', 'point_count'], '#FFD166', 100, '#EF476F', 750, '#06D6A0']
   }
 }
-export const clusterViolationsCountLayer = {
+export const clusterViolationsCountLayer: any = {
   id: 'cluster-violations-count',
   type: 'symbol',
   source: 'violationsData',
@@ -120,7 +121,14 @@ export const clusterViolationsCountLayer = {
 }
 
 // The names & locations of the neighborhood buttons
-export const neighborhoods = [
+
+export type INeighborhood = {
+  name: string;
+  latitude: number;
+  longitude: number;
+  zoom: number;
+}
+export const neighborhoods: Array<INeighborhood> = [
   {
     "name": "Back Bay",
     "latitude": 42.34935079219511,

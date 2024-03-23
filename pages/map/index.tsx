@@ -13,33 +13,11 @@ interface ILandlord {
 interface IMapProps {
     landlords: ILandlord[];
 }
-// interface IAddress {
-//     FULL_ADDRESS: string;
-//     MAILING_NEIGHBORHOOD: string;
-//     PARCEL: string;
-//     SAM_ADDRESS_ID: string;
-//     X_COORD: string;
-//     Y_COORD: string;
-//     ZIP_CODE: string;
-// }
 
-// debounce function, ensure api requests are not made too frequently
-// function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
-//     let timeout: NodeJS.Timeout | null = null;
-
-//     return (...args: Parameters<T>) => {
-//         const later = () => {
-//             timeout = null;
-//             func(...args);
-//         };
-
-//         if (timeout) {
-//             clearTimeout(timeout);
-//         }
-
-//         timeout = setTimeout(later, wait);
-//     };
-// }
+interface ICoords {
+    latitude: number,
+    longitude: number
+}
 
 const Map: React.FC<IMapProps> = ({ landlords }) => {
     const {
@@ -51,35 +29,15 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
         setAddressSuggestions
     } = useSearchAPI();
 
-    // const [searchAddress, setSearchAddress] = useState('');
-    // const [addressSuggestions, setAddressSuggestions] = useState<IAddress[]>([]);
-    const [selectedCoords, setSelectedCoords] = useState({ latitude: -71.0589, longitude: 42.3601 });
+    const [selectedCoords, setSelectedCoords] = useState<ICoords>({ latitude: -71.0589, longitude: 42.3601 });
     const [isCoordsSet, setIsCoordsSet] = useState(false);
-    // const [selectedAddress, setSelectedAddress] = useState<IAddress>();
 
     const router = useRouter();
 
     const inputRef = useRef<HTMLInputElement>(null); // reference for searchbox
     const suggestionsRef = useRef<HTMLUListElement>(null); // reference for suggestions
 
-    // call /api/searchAddress with address parameter as input
-    // const fetchAddressSuggestions = async (searchAddress: string) => {
-    //     try {
-    //         const res = await fetch(`/api/addresses?search=${searchAddress}`);
-    //         if (res.ok) {
-    //             const suggestions = await res.json();
-    //             setAddressSuggestions(suggestions);
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
-
-    // the debounced version of fetchAddressSuggestions
-    // const debouncedFetchAddressSuggestions = debounce((searchAddress: string) => {
-    //     fetchAddressSuggestions(searchAddress);
-    // }, 300);
-
+   
     useEffect(() => {
         // define the handler
         const handleClickOutside = (event: MouseEvent) => {
@@ -101,26 +59,7 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
         };
     }, []);
 
-    // handle search update
-    // const handleSearchUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     const value = event.target.value;
-    //     setSearchAddress(value);
-    //     if (value.length > 2) {
-    //         debouncedFetchAddressSuggestions(value);
-    //     } else {
-    //         setAddressSuggestions([]);
-    //     }
-    // };
-
-    // Onclick search button
-    // finds the address if input length is longer than 2
-    // const handleSearchClick = async () => {
-    //     if (searchAddress.length > 2) {
-    //         await fetchAddressSuggestions(searchAddress);
-    //     } else {
-    //         setAddressSuggestions([]);
-    //     }
-    // };
+    
     
     const handleAddressSelection = async (address: IAddress) => {
         // setSelectedAddress(address);

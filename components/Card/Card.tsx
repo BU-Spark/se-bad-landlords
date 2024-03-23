@@ -22,8 +22,10 @@ const Card = ({ properties }: {properties: IProperties} ) => {
     }
   };
   return (
-    <div className="grid-item bg-white p-4 rounded-lg border-[0.5px] border-[#58585B]">
+    <div className="grid-item bg-white p-5 rounded-lg border-[0.5px] border-[#58585B]">
+      <p className="font-lora text-neighborhood-dark-blue text-base">
         {addressDetails.FULL_ADDRESS}
+      </p>
       <div className="flex justify-end">
         {/* click the button to redirect to the detail page */}
         <img src="/property-arrow.svg" onClick={handleButtonClick} alt="property-arrow" className="mt-5 cursor-pointer" />

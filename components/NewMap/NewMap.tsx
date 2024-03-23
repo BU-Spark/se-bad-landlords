@@ -1,4 +1,4 @@
-import Map, { Source, Layer, Popup } from 'react-map-gl';
+import Map, { Source, Layer, Popup, MapRef } from 'react-map-gl';
 import { WebMercatorViewport } from 'viewport-mercator-project';
 import { useRouter } from 'next/router';
 import { TailSpin } from 'react-loader-spinner';
@@ -18,28 +18,58 @@ import {
   neighborhoods
 }
 from './data';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { IAddress } from '@pages/api/search';
 
-const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords }) => {
+type ICardPopup = {
+  longitude: number,
+  latitude: number,
+  properties: IProperties
+}
+
+type IProperties = {
+  SAM_ID: string;
+  addressDetails: IAddress;
+}
+
+type ICoords = {
+  latitude: number,
+  longitude: number
+}
+
+type IViewport = {
+  latitude: number,
+  longitude: number,
+  zoom: number
+}
+
+const NewMap = (
+  { selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords }: 
+  {
+    selectedCoords: ICoords,
+    isCoordsSet: boolean,
+    setIsCoordsSet: React.Dispatch<React.SetStateAction<boolean>>,
+    setSelectedCoords: React.Dispatch<React.SetStateAction<ICoords>>
+  }
+) => {
   const router = useRouter();
   const mapContainerRef = useRef(null);
-  const mapRef = useRef(null) // the <Map/> component
-  const [mapLoading, setMapLoading] = useState(true) // whether the map is loading
+  const [mapLoading, setMapLoading] = useState<boolean>(true) // whether the map is loading
   // uncomment this if want to fetch data manually instead of from map
   // const [geoJsonData, setGeoJsonData] = useState(null); 
-  const [showCards, setShowCards] = useState(false); // trigger for card display
-  const [cardPopup, setCardPopup] = useState(null)
-  const [viewportBounds, setViewportBounds] = useState({ west: null, south: null, east: null, north: null }); // bound of the map
-  const [hoveredNeighborhoodFeatureId, setHoveredNeighborhoodFeatureId] = useState(null) // The feature.id of the neighborhood the mouse is hovering
-  const [viewport, setViewport] = useState({
-    // initial state of viewport
+  const [cardPopup, setCardPopup] = useState<ICardPopup | null>(null)
+  // const [viewportBounds, setViewportBounds] = useState({ west: null, south: null, east: null, north: null }); // bound of the map
+  const [hoveredNeighborhoodFeatureId, setHoveredNeighborhoodFeatureId] = useState<number | null>(null) // The feature.id of the neighborhood the mouse is hovering
+  const [viewport, setViewport] = useState<IViewport>({
+    // initial state of viewport (somewhere near backbay...)
     longitude: -71.0589,
     latitude: 42.3601,
     zoom: 11.5
   });
   // sets the map size depending on the height
-  const [mapHeight, setMapHeight] = useState(null);
+  const [mapHeight, setMapHeight] = useState<number | null>(null);
   
+  const mapRef = useRef<MapRef>(null);// the <Map/> component
   
   // init the map height
   useEffect(() => {
@@ -65,12 +95,12 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
 
 
   // <Map> onLoad=
-  const handleMapLoad = (event) => {
+  const handleMapLoad = (event: any) => {
     setMapLoading(false)
   }
 
   // <Map> onClick=
-  const handleMapClick = async (event) => {
+  const handleMapClick = async (event: any) => {
     const map = event.target;
     const selectedFeatures = event.target.queryRenderedFeatures(event.point, {layers: ["unclustered-violations", "clustered-violations", "cluster-violations-count"]});
     if(selectedFeatures.length > 0){
@@ -102,41 +132,38 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
   }
   
   // <Map> onMove = 
-  const handleMapMove = (evt) => {
-    
+  const handleMapMove = (evt: any) => {
     const nextViewport = evt.viewState;
     setViewport(nextViewport); // update viewport
     
-    // TODO 
-    // check if cards should be displayed
-    const shouldShowCards = nextViewport.zoom > 15;
-    setShowCards(shouldShowCards);
+    // // check if cards should be displayed
+    // const shouldShowCards = nextViewport.zoom > 15;
+    // setShowCards(shouldShowCards);
   
-    // update the map edge
-    const width = mapContainerRef.current.offsetWidth;
-    const height = mapContainerRef.current.offsetHeight;
+    // // update the map edge
+    // const width = mapContainerRef?.current?.offsetWidth;
+    // const height = mapContainerRef?.current?.offsetHeight;
 
-    const viewport = new WebMercatorViewport({
-      width,
-      height,
-      latitude: nextViewport.latitude,
-      longitude: nextViewport.longitude,
-      zoom: nextViewport.zoom
-    });
-    const bounds = viewport.getBounds();
-    // console.log(bounds);
-    const [west, south] = bounds[0];
-    const [east, north] = bounds[1];
-    setViewportBounds({
-      west: west,
-      south: south,
-      east: east,
-      north: north,
-    });  
+    // const viewport = new WebMercatorViewport({
+    //   width,
+    //   height,
+    //   latitude: nextViewport.latitude,
+    //   longitude: nextViewport.longitude,
+    //   zoom: nextViewport.zoom
+    // });
+    // const bounds = viewport.getBounds();
+    // const [west, south] = bounds[0];
+    // const [east, north] = bounds[1];
+    // setViewportBounds({
+    //   west: west,
+    //   south: south,
+    //   east: east,
+    //   north: north,
+    // });  
   }
   
   // <Map> onMouseMove = 
-  const handleMapMouseMove = (event) => {
+  const handleMapMouseMove = (event: any) => {
     if(mapLoading === true) return
     const map = event.target;
     { // neighborhoods-layer
@@ -196,7 +223,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
           position: 'absolute',
           top: 0,
           left: 0,
-          height: mapHeight,
+          height: mapHeight? mapHeight: 10,
           width: '100%',
           display: 'flex',
           justifyContent: 'center',
@@ -206,7 +233,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
           <TailSpin color="#00BFFF" height={80} width={80} />
         </div>}
     </div>
-    <div className="relative" ref={mapContainerRef} style={{ width: '100%', height: mapHeight }}>
+    <div className="relative" ref={mapContainerRef} style={{ width: '100%', height: mapHeight? mapHeight: 10 }}>
       <Map
         {...viewport}
         onLoad={handleMapLoad}
@@ -217,7 +244,7 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
         ref={mapRef}
         style={{
           width: '100%',
-          height: mapHeight
+          height: mapHeight? mapHeight : 10
         }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken="pk.eyJ1Ijoic3BhcmstYmFkbGFuZGxvcmRzIiwiYSI6ImNsaWpsMXc3ZTA4MGszZXFvaDBrc3I0Z3AifQ.mMM7raXYPneJfzyOoflFfQ"
@@ -286,11 +313,13 @@ const NewMap = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords
               onClick={() => {
                 const { name, ...vp } = neighborhood
                 setViewport(vp)
-                mapRef.current?.setFeatureState(
-                  {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: hoveredNeighborhoodFeatureId,}, 
-                  {hover: false,}
-                );
-                setHoveredNeighborhoodFeatureId(null)
+                if(mapRef?.current && hoveredNeighborhoodFeatureId ){
+                  mapRef?.current.setFeatureState(
+                    {source: 'neighborhoods', sourceLayer: 'census2020_bg_neighborhoods-5hyj9i',id: hoveredNeighborhoodFeatureId,}, 
+                    {hover: false,}
+                  );
+                  setHoveredNeighborhoodFeatureId(null)
+                }
               }}
               className="mb-2 py-1 px-4 bg-white-500 text-neighborhood-dark-blue font-lora rounded shadow-md hover:bg-gray-400 border-0.5 border-neighborhood-dark-blue focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-opacity-75"
             >
