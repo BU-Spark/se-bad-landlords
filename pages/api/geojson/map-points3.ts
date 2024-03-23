@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         GROUP BY
             property."OWNER"
         HAVING
-            COUNT(bpv."sam_id") > 5
+            COUNT(bpv."sam_id") > 0
       )
       SELECT
             bpv."sam_id",

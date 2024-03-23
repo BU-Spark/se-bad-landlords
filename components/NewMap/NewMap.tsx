@@ -75,6 +75,10 @@ const NewMap = (
     setMapLoading(false)
   }
 
+  useEffect(() => {
+    
+  }, [])
+
   // <Map> onClick=
   const handleMapClick = async (event: any) => {
     const map = event.target;
@@ -236,11 +240,19 @@ const NewMap = (
     // TODO
   }
 
+  const handleMapOnSourceData = (event: any) => {
+    if (event.sourceId == "violations" && mapRef.current) {
+      const isViolationsSourceLoaded = mapRef?.current?.isSourceLoaded("violations");
+      console.log(isViolationsSourceLoaded);
+      setMapLoading(mapLoading && !isViolationsSourceLoaded)
+    }
+  }
+
   return(
     <>
       <div style={{position: 'relative', width: '100%', height: mapHeight? mapHeight: 10 }}>
         {/* The `Loading...` Spinner */}
-        {mapLoading && <div style={{
+        {mapLoading && <div className='z-50' style={{
             position: 'absolute',
             top: 0,
             left: 0,
@@ -262,6 +274,7 @@ const NewMap = (
             onMouseMove={handleMapMouseMove}
             onClick={handleMapClick}
             onZoom={handleMapZoom}
+            onSourceData={handleMapOnSourceData}
             ref={mapRef}
             style={{
               width: '100%',
@@ -301,6 +314,8 @@ const NewMap = (
             </section>
             {/* The neighborhood buttons */}
             <section className="absolute top-5 right-5 z-10 bg-white p-4 rounded-lg shadow-md">
+              <p>{mapLoading ? "t": "f"}</p>
+              <p>{mapRef?.current?.isSourceLoaded("violations") ? "yes": "no"}</p>
               <p className="mb-2 mx-4 text-center font-bold font-montserrat text-xl">
                 NEIGHBORHOODS
               </p>
