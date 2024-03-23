@@ -14,8 +14,14 @@ export const blockLayer: any = {
   },
   'source-layer': 'census2020_tracts-4u84f2',
   paint: {
-    'fill-color': 'blue',
+    'fill-color': 'red',
     'fill-outline-color': 'red',
+    // 'fill-opacity': [
+    //   'case',
+    //   ['boolean', ['feature-state', 'hover'], false],
+    //   0.6,
+    //   0
+    // ]
     'fill-opacity': 0
   }
 }
