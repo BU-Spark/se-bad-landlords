@@ -80,9 +80,8 @@ const NewMap = (
     const map = event.target;
     { // violations layer
       const selectedFeatures = event.target.queryRenderedFeatures(event.point, {layers: ["unclustered-violations", "clustered-violations", "cluster-violations-count"]});
-      if(selectedFeatures.length > 0){
+      if(selectedFeatures.length > 0)
         console.log("The feature stored in Map is: ", selectedFeatures[0])
-      }
       if (selectedFeatures && selectedFeatures.length > 0 && selectedFeatures[0] && selectedFeatures[0].source === 'violations') {
         const selectedFeature = selectedFeatures[0];
         console.log(`feature.layer.id: ${selectedFeature.layer.id}`)
@@ -90,7 +89,7 @@ const NewMap = (
           if (selectedFeature.properties.SAM_ID !== null) {
             // implement the modal pop-up here changing the state to true
             // alert(`SAM_ID: ${selectedFeature.properties.SAM_ID}`);
-            console.log("DEBUG the type of selectedFeature.properties.addressDetails is", typeof selectedFeature.properties.addressDetails)
+            // console.log("DEBUG the type of selectedFeature.properties.addressDetails is", typeof selectedFeature.properties.addressDetails)
             setCardPopup({
               longitude: selectedFeature.geometry.coordinates[0],
               latitude: selectedFeature.geometry.coordinates[1],
@@ -105,6 +104,7 @@ const NewMap = (
             alert(`cluster_id: ${selectedFeature.properties.cluster_id}`)
           }
         } 
+        return; // do not check the neighborhood if click on a red point
       } 
     }
     { // neighborhood layer
