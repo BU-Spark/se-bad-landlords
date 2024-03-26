@@ -19,7 +19,7 @@ interface ICoords {
     longitude: number
 }
 
-const Map: React.FC<IMapProps> = ({ landlords }) => {
+const Map: React.FC<IMapProps> = () => {
     const {
         searchAddress,
         addressSuggestions,
@@ -30,12 +30,20 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
     } = useSearchAPI();
 
     const [selectedCoords, setSelectedCoords] = useState<ICoords>({ latitude: -71.0589, longitude: 42.3601 });
-    const [isCoordsSet, setIsCoordsSet] = useState(false);
+    const [isCoordsSet, setIsCoordsSet] = useState<boolean>(false);
+    const [landlords, setLandlords] = useState<ILandlord[] | null>(null) // null means loading || loading error
 
     const router = useRouter();
 
     const inputRef = useRef<HTMLInputElement>(null); // reference for searchbox
     const suggestionsRef = useRef<HTMLUListElement>(null); // reference for suggestions
+
+    useEffect(() => {
+        const fetchData = async () => {
+            fetchLandlords();
+        }
+        fetchData()
+    }, [])
 
    
     useEffect(() => {
@@ -109,6 +117,25 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
         }
     };
 
+    const fetchLandlords = async () => {
+        try {
+            const res = await fetch(`${base_url}/api/landlords/top-ten`);
+            if (res.ok) {
+                const landlords: ILandlord[] = await res.json() as ILandlord[];
+                setLandlords(landlords);
+                return
+            } else {
+                console.error('Failed to fetch landlords:', res.statusText);
+                setLandlords(null)
+            }
+            
+        } catch (err) {
+            console.error(err);
+            setLandlords(null);
+            return
+        }
+    }
+    
     return (
         <>
             {/* image title */}
@@ -170,7 +197,10 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
                     TOP 10 PROPERTIES BY VIOLATION COUNT
                 </div>
                 <div className="grid grid-cols-1 mb-20 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-9 gap-y-16">
-                    {landlords.map((landlord, index) => (
+                    {landlords === null ?
+                    "Loading..."
+                    :
+                    landlords.map((landlord, index) => (
                         <div className="grid-item bg-white p-4 rounded-lg border-[0.5px] border-[#58585B]" key={index}>
                             <div>
                                 <div className="font-['Lora'] text-sm mb-4">Property Type</div>
@@ -191,20 +221,25 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
 // netlify site url will be used if not available then localhost
 const base_url = process.env.SITE_URL || 'http://localhost:3000';
 
-export const getStaticProps = async () => {
-    try {
-        const res = await fetch(`${base_url}/api/landlords/top-ten`);
-        if (res.ok) {
-            const landlords: ILandlord[] = await res.json();
-            return { props: { landlords } };
-        }
+/* getStaticProps takes 1 second */
+
+// export const getStaticProps = async () => {
+//     try {
+//         const res = await fetch(`${base_url}/api/landlords/top-ten`);
+//         if (res.ok) {
+//             const landlords: ILandlord[] = await res.json();
+//             return { props: { landlords } };
+//         }
         
-        console.error('Failed to fetch landlords:', res.statusText);
-        return { props: { landlords: [] } };
-    } catch (err) {
-        console.error(err);
-        return { props: { landlords: [] } };
-    }
-}
+//         console.error('Failed to fetch landlords:', res.statusText);
+//         return { props: { landlords: [] } };
+//     } catch (err) {
+//         console.error(err);
+//         return { props: { landlords: [] } };
+//     }
+// }
+
+
+
 
 export default Map;
