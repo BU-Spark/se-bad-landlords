@@ -20,6 +20,7 @@ import {
 from './data';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IAddress, ICardPopup, ICoords, IProperties, IViewport } from '../types'
+import { MapEvent, MapSourceDataEvent, ViewStateChangeEvent } from 'react-map-gl/dist/esm/types';
 
 
 const NewMap = (
@@ -70,14 +71,12 @@ const NewMap = (
     }
   }, [selectedCoords, isCoordsSet]);
 
+
   // <Map> onLoad=
-  const handleMapLoad = (event: any) => {
+  const handleMapLoad = (event: MapEvent<mapboxgl.Map, undefined>) => {
     setMapLoading(false)
   }
 
-  useEffect(() => {
-    
-  }, [])
 
   // <Map> onClick=
   const handleMapClick = async (event: any) => {
@@ -106,6 +105,15 @@ const NewMap = (
         } else if(selectedFeature.layer.id === "clustered-violations" || selectedFeature.layer.id === "cluster-violations-count" ) { // a yellow cluster is clicked
           if (selectedFeature.properties.cluster_id !== null) {
             alert(`cluster_id: ${selectedFeature.properties.cluster_id}`)
+            const coordinates: ICoords = {
+              longitude: selectedFeature.geometry.coordinates[0],
+              latitude: selectedFeature.geometry.coordinates[1]
+            }
+            const vp: IViewport = {
+              ...coordinates,
+              zoom: 14
+            }
+            setViewport(vp);
           }
         } 
         return; // do not check the neighborhood if click on a red point
@@ -152,10 +160,9 @@ const NewMap = (
   }
   
   // <Map> onMove = 
-  const handleMapMove = (evt: any) => {
+  const handleMapMove = (evt: ViewStateChangeEvent<mapboxgl.Map>) => {
     const nextViewport = evt.viewState;
     setViewport(nextViewport); // update viewport
-    
     // // check if cards should be displayed
     // const shouldShowCards = nextViewport.zoom > 15;
     // setShowCards(shouldShowCards);
@@ -236,11 +243,11 @@ const NewMap = (
     }
   }
 
-  const handleMapZoom = () => {
+  const handleMapZoom = (event: ViewStateChangeEvent<mapboxgl.Map>) => {
     // TODO
   }
 
-  const handleMapOnSourceData = (event: any) => {
+  const handleMapOnSourceData = (event: MapSourceDataEvent<mapboxgl.Map>) => {
     if (event.sourceId == "violations" && mapRef.current) {
       const isViolationsSourceLoaded = mapRef?.current?.isSourceLoaded("violations");
       setMapLoading(mapLoading && !isViolationsSourceLoaded)
@@ -269,9 +276,9 @@ const NewMap = (
           <Map
             {...viewport}
             onLoad={handleMapLoad}
+            onClick={handleMapClick}
             onMove={handleMapMove}
             onMouseMove={handleMapMouseMove}
-            onClick={handleMapClick}
             onZoom={handleMapZoom}
             onSourceData={handleMapOnSourceData}
             ref={mapRef}
@@ -313,8 +320,8 @@ const NewMap = (
             </section>
             {/* The neighborhood buttons */}
             <section className="absolute top-5 right-5 z-10 bg-white p-4 rounded-lg shadow-md">
-              <p>{mapLoading ? "t": "f"}</p>
-              <p>{mapRef?.current?.isSourceLoaded("violations") ? "yes": "no"}</p>
+              {/* <p>{mapLoading ? "t": "f"}</p>
+              <p>{mapRef?.current?.isSourceLoaded("violations") ? "yes": "no"}</p> */}
               <p className="mb-2 mx-4 text-center font-bold font-montserrat text-xl">
                 NEIGHBORHOODS
               </p>

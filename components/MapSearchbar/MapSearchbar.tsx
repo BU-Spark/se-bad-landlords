@@ -19,6 +19,7 @@ function debounce(func: (...args: any[]) => void, wait: number) {
     };
   }
 
+
 const MapSearchbar = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords } : {
     selectedCoords: ICoords,
     isCoordsSet: boolean,

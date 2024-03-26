@@ -122,6 +122,7 @@ const Map: React.FC<IMapProps> = () => {
             const res = await fetch(`${base_url}/api/landlords/top-ten`);
             if (res.ok) {
                 const landlords: ILandlord[] = await res.json() as ILandlord[];
+                console.log("len: ", landlords.length)
                 setLandlords(landlords);
                 return
             } else {
