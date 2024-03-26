@@ -243,7 +243,6 @@ const NewMap = (
   const handleMapOnSourceData = (event: any) => {
     if (event.sourceId == "violations" && mapRef.current) {
       const isViolationsSourceLoaded = mapRef?.current?.isSourceLoaded("violations");
-      console.log(isViolationsSourceLoaded);
       setMapLoading(mapLoading && !isViolationsSourceLoaded)
     }
   }

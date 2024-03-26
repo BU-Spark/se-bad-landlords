@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { IAddress } from '@pages/api/search';
+import { IProperties } from '@components/types';
 
-type IProperties = {
-  SAM_ID: string;
-  addressDetails: IAddress;
-}
+// type IProperties = {
+//   SAM_ID: string;
+//   addressDetails: IAddress;
+// }
 
 const Card = ({ properties }: {properties: IProperties} ) => {
   const router = useRouter();

@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef} from 'react';
 import { useRouter} from 'next/router';
+import { IAddress, ICoords } from '@components/types';
 
-function debounce(func, wait) {
-    let timeout = null;
+function debounce(func: (...args: any[]) => void, wait: number) {
+    let timeout: NodeJS.Timeout | null = null;
   
-    return (...args) => {
+    return (...args: any[]) => {
         const later = () => {
             timeout = null;
             func(...args);
@@ -18,15 +19,20 @@ function debounce(func, wait) {
     };
   }
 
-const MapSearchbar = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords }) => {
-    const [selectedAddress, setSelectedAddress] = useState();
-    const [addressSuggestions, setAddressSuggestions] = useState([]);
-    const [searchAddress, setSearchAddress] = useState('');
+const MapSearchbar = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelectedCoords } : {
+    selectedCoords: ICoords,
+    isCoordsSet: boolean,
+    setIsCoordsSet: React.Dispatch<React.SetStateAction<boolean>>,
+    setSelectedCoords: React.Dispatch<React.SetStateAction<ICoords>>
+}) => {
+    const [selectedAddress, setSelectedAddress] = useState<IAddress | null>(null);
+    const [addressSuggestions, setAddressSuggestions] = useState<IAddress[]>([]);
+    const [searchAddress, setSearchAddress] = useState<string>('');
     
     const inputRef = useRef(null); // reference for searchbox
     const suggestionsRef = useRef(null); // reference for suggestions
 
-    const fetchAddressSuggestions = async (searchAddress) => {
+    const fetchAddressSuggestions = async (searchAddress: string) => {
         try {
             const res = await fetch(`/api/addresses?search=${searchAddress}`);
             if (res.ok) {
@@ -37,13 +43,13 @@ const MapSearchbar = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelected
             console.error(error);
         }
       };
-    
+      
       const debouncedFetchAddressSuggestions = debounce((searchAddress) => {
         fetchAddressSuggestions(searchAddress);
       }, 300);
     
       // handle search update
-      const handleSearchUpdate = (event) => {
+      const handleSearchUpdate: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const value = event.target.value;
         setSearchAddress(value);
         if (value.length > 2) {
@@ -63,7 +69,7 @@ const MapSearchbar = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelected
         }
       };
     
-      const handleAddressSelection = async (address) => {
+      const handleAddressSelection = async (address: IAddress) => {
         setSelectedAddress(address);
         //const addressString = JSON.stringify(address);
         //const encodedAddress = encodeURIComponent(addressString);

@@ -190,6 +190,7 @@ const Map: React.FC<IMapProps> = ({ landlords }) => {
 
 // netlify site url will be used if not available then localhost
 const base_url = process.env.SITE_URL || 'http://localhost:3000';
+
 export const getStaticProps = async () => {
     try {
         const res = await fetch(`${base_url}/api/landlords/top-ten`);

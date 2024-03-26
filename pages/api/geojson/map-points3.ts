@@ -15,6 +15,7 @@ type RowData = {
     latitude: string;
     longitude: string;
     // below is IAddress (Remember SAM_ADDRESS_ID)
+    // SAM_ADDRESS_ID: string  // same to sam_id
     FULL_ADDRESS         :String
     MAILING_NEIGHBORHOOD :String
     ZIP_CODE             :String
