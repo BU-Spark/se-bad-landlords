@@ -29,7 +29,7 @@ const Map: React.FC<IMapProps> = () => {
         setAddressSuggestions
     } = useSearchAPI();
 
-    const [selectedCoords, setSelectedCoords] = useState<ICoords>({ latitude: -71.0589, longitude: 42.3601 });
+    const [selectedCoords, setSelectedCoords] = useState<ICoords>({ longitude: -71.0589, latitude: 42.3601 });
     const [isCoordsSet, setIsCoordsSet] = useState<boolean>(false);
     const [landlords, setLandlords] = useState<ILandlord[] | null>(null) // null means loading || loading error
 

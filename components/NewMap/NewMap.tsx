@@ -63,7 +63,6 @@ const NewMap = (
   useEffect(() => {
     if (selectedCoords.latitude && selectedCoords.longitude && isCoordsSet) {
       setViewport({
-        ...viewport,
         latitude: selectedCoords.latitude,
         longitude: selectedCoords.longitude,
         zoom: 17 // zoom level for when user searches
@@ -325,6 +324,8 @@ const NewMap = (
               <p className="mb-2 mx-4 text-center font-bold font-montserrat text-xl">
                 NEIGHBORHOODS
               </p>
+              {/* <p>{viewport.longitude}   {viewport.latitude}</p>
+              <p>{selectedCoords.longitude}   {selectedCoords.latitude}</p> */}
               {hoveredNeighborhoodFeatureName && 
                 <p className='text-lg font-lora mb-2 mt-2 text-center text-neighborhood-dark-blue'>
                   {hoveredNeighborhoodFeatureName}

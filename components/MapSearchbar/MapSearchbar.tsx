@@ -99,12 +99,15 @@ const MapSearchbar = ({ selectedCoords, isCoordsSet, setIsCoordsSet, setSelected
             const fullAddress = `${address.FULL_ADDRESS}, ${address.MAILING_NEIGHBORHOOD}, ${address.ZIP_CODE}`;
             const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fullAddress}`);
             const data = await response.json();
+            console.log("DEBUG", data)
             
             if (data.length > 0) {
                 const latitude = parseFloat(data[0].lat);
                 const longitude = parseFloat(data[0].lon);
+
     
                 if (!isNaN(latitude) && !isNaN(longitude)) {
+                    console.log(latitude, "xxxxxx", longitude)  
                     setSelectedCoords({
                         latitude: latitude,
                         longitude: longitude
