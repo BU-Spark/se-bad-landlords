@@ -1,0 +1,17 @@
+name: sync-github-activity-with-trello
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: sync branch with trello
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync with Trello
+        uses: mannyakosah/sync-with-trello@v1.17
+        with:
+          trello-api-key: ${{ secrets.TRELLO_KEY }}
+          trello-auth-token: ${{ secrets.TRELLO_TOKEN }}
+          trello-board-id: ${{ secrets.TRELLO_BOARD }}
+          trello-review-list-name: "Reviewing"
+          trello-completed-list-name: "Done"
